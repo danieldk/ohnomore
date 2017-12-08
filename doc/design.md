@@ -42,3 +42,75 @@ These are largely taken from the TüBa-D/Z stylebook.
 | Passive *werden*                                                   | The lemma is suffixed with the tag *%passiv*                          | *wird (geehrt) → werden%passiv*                                                                                                 |
 | Verbs with a separable prefix                                      | *prefix#lemma* regardless of separation of the prefix                 | *stellen ... ein → ein#stellen*, *eingestellt → ein#stellen*                                                                    |
 | Reflexives (*PRF*)                                                 | *#refl*                                                               | *sich → #refl*                                                                                                                  |
+
+# Handling of special phenomena
+
+## Articles
+
+Since articles are ambiguous, articles are lemmatized as follows by
+the SepVerb lemmatizer:
+
+* Definite article: *d*
+* Indefinite article: *e*
+
+For the training set, all article lemmas need to be replaced by these
+shortened lemmas.
+
+## Contractions (*APPRART*)
+
+SepVerb does not have special handling for *APPRART* contractions and
+lets the lemmatizer do the lemmatization. However, since this is a
+closed class (?) it may make more sense to define a mapping for this
+category.
+
+## Non-standard use upper/lower-case
+
+SepVerb does not rectify this? It would be interesting to see if
+sequence-to-sequence models can automatically lowercase words.
+
+SepVerb does lowercase the first letter of words that start with an
+upper case and are not in the category *NN*, *NE*, or *FM*. These
+are typically sentence-initial words.
+
+Does it make sense to completely lowercase words which are not in
+these categories?
+
+## Ambiguous plural forms
+
+This only affect preparation of training data. SepVerb always uses
+the first lemma from the disjunction.
+
+## Auxiliaries/modals/passive *werden*
+
+During the preparation of training data, the *%aux*/*%passiv* tags are
+removed. During lemmatization:
+
+* *%passiv* when:
+  - The lemma is *werden*.
+  - The lemma governs a token with the *AUX* relation.
+  - This governed token has the tag *VVPP*.
+* Otherwise *%aux* is added, when the lemma governs a token with the
+  *AUX* relation.
+  
+Since the auxiliary and modal verbs are a closed-class, we might want
+to use a simple mapping for lemmatization. Also, the rules could be
+more fine-grained, checking presence of a *VA* or *VM* tag.
+
+## Separable verb prefixes
+
+During the preparation of training data, the separable prefix
+*particle#* is removed.
+
+During lemmatization separable prefixes are added as follows:
+
+- The tag is checked to start with *VV*.
+- The token/lemma are lowercased.
+- Then:
+  - For infinitives (or null?), such as *ausgehen* the corrected lemma
+    is looked up (*aus#gehen*). If the lookup does not succeed, then
+	it will greedily try to split the verb, such that the result
+	is a valid particle/verb combination.
+  - For other inflections, the separable verb particle dependency relation
+    and separable verb particle tag are used to find the particle for
+	a verb and combine them.
+  
