@@ -1,0 +1,14 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# Single separated prefix
+_ zeichnen VVFIN ab#zeichnen _ _ _ _ AVZ _ ab   PTKVZ
+_ stellen  VVFIN vor#stellen _ _ _ _ AVZ _ vor  PTKVZ
+_ müssen   VVFIN rein#müssen _ _ _ _ AVZ _ rein PTKVZ
+_ werden   VVFIN los#werden  _ _ _ _ AVZ _ los  PTKVZ
+
+# Multiple separated prefixes
+_ nehmen VVFIN zu#nehmen|ab#nehmen _ _ _ _ AVZ _ ab PTKVZ KON _ zu PTKVZ
+
+# Not all tags can have separated prefixes.
+_ zeichnen VVINF zeichnen _ _ _ _ AVZ _ ab   PTKVZ

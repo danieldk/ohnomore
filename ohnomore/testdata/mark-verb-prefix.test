@@ -1,0 +1,16 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# Lookup table
+_ abbestellen VVFIN ab#bestellen
+
+# Derive from lemma. Preferably test with particles of which a
+# prefix is also a particle (e.g. 'dazu' -> 'da') in order to
+# check longest prefix matching.
+_ dazufügen       VVFIN dazu#fügen
+_ wiedergutmachen VVFIN wieder#gut#machen
+_ bremsen         VVFIN bremsen
+
+# Derive from form.
+dazugefügt       fügen VVFIN dazu#fügen
+wiedergutgemacht machen VVFIN wieder#gut#machen
