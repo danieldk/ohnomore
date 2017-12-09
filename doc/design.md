@@ -18,10 +18,11 @@ they could materialize in a lemmatizer.
 
 These are largely taken from the TüBa-D/Z stylebook.
 
-* pronouns, nouns, determinar: base form nominative/singular
+* pronouns, nouns, determiners: base form nominative/singular
 * verbs: base form infinitive
 * adjective: base form predicate
-* conjunction, punctuation marks: invariant
+* invariant tags: ADV, APPR, APPO, APZR, FM, ITJ, KOUI, KOUS, KON,
+  KOKOM, ADJD, CARD, PTKZU, PTKA, PTKNEG
 
 ### Special phenomena
 
