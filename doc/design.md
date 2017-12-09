@@ -107,7 +107,8 @@ During lemmatization separable prefixes are added as follows:
 - The tag is checked to start with *VV*.
   (Is this correct?: see e.g. *zurück#wollen*, *übrich#haben*)
 - The token/lemma are lowercased.
-- Then:
+- Then (check this again, this does not seem correct, e.g. finite verbs
+  can have participles in verb-final word order):
   - For infinitives (or null?), such as *ausgehen* the corrected lemma
     is looked up (*aus#gehen*). If the lookup does not succeed, then
 	it will greedily try to split the verb, such that the result
