@@ -105,6 +105,7 @@ During the preparation of training data, the separable prefix
 During lemmatization separable prefixes are added as follows:
 
 - The tag is checked to start with *VV*.
+  (Is this correct?: see e.g. *zurück#wollen*, *übrich#haben*)
 - The token/lemma are lowercased.
 - Then:
   - For infinitives (or null?), such as *ausgehen* the corrected lemma
