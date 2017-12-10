@@ -4,13 +4,9 @@
 # Lookup table
 _ abbestellen VVFIN ab#bestellen
 
-# Derive from lemma. Preferably test with particles of which a
-# prefix is also a particle (e.g. 'dazu' -> 'da') in order to
-# check longest prefix matching.
-_ dazufügen       VVFIN dazu#fügen
-_ wiedergutmachen VVFIN wieder#gut#machen
-_ bremsen         VVFIN bremsen
-
 # Derive from form.
-dazugefügt       fügen VVFIN dazu#fügen
-wiedergutgemacht machen VVFIN wieder#gut#machen
+dazugefügt       fügen    VVFIN dazu#fügen
+wiedergutgemacht machen   VVFIN wieder#gut#machen
+abzuarbeiten     arbeiten VVIZU ab#arbeiten
+abgefangen       fangen   VVPP  ab#fangen
+abhing           hängen   VVFIN ab#hängen

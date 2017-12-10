@@ -77,7 +77,7 @@ where
 
         let test_token = read_token(&mut iter).unwrap();
         let index = graph.add_node(test_token);
-        let correct = iter.next().unwrap().to_owned();
+        let correct = iter.next().expect("Gold standard lemma missing").to_owned();
 
         // Optional: read head
         if let Some((rel, head)) = read_dependency(&mut iter) {

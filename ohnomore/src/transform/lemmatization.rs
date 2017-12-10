@@ -110,33 +110,28 @@ where
 
         // There are two cases that we have to handle separately:
         //
-        // 1. The lemmatizer did not strip the prefix. In this case, we have
-        //    to add the prefix separators:
-        //
-        //    a. Use a lookup table if the verb lemma is known.
-        //    b. Decompose the lemma using known prefixes.
+        // 1. The lemmatizer did not strip the prefix. In this case, we
+        //    perform a lemma lookup. For now, removing prefixes from the
+        //    lemma itself seems to be too tricky.
         //
         // 2. The lemmatizer stripped the prefix. The prefix needs to be
         //    inferred from the token's form.
 
-        // Case 1a: try a simple lookup for the lemma
+        // Case 1: try a simple lookup for the lemma
         if let Some(sep_lemma) = self.prefix_verbs.get(&lemma_lc) {
             return sep_lemma.clone();
-        }
-
-        // Case 1b: if this fails, look for valid prefixes in the lemma.
-        let mut lemma_parts = longest_prefixes(&self.prefixes, lemma_lc.as_str());
-        if !lemma_parts.is_empty() {
-            let prefixes_len = lemma_parts.iter().fold(0, |acc, p| acc + p.len());
-            lemma_parts.push(lemma_lc[prefixes_len..].to_owned());
-            return lemma_parts.join("#");
         }
 
         // Case 2: there are no prefixes in the lemma, try to find prefixes
         // in the form.
         let form_lc = token.form().to_lowercase();
-        lemma_parts = longest_prefixes(&self.prefixes, &form_lc);
+        let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc);
         if !lemma_parts.is_empty() {
+            // abzuarbeiten arbeiten -> ab#arbeiten, not: ab#zu#arbeiten
+            if token.tag() == ZU_INFINITIVE_VERB && lemma_parts.last().unwrap() == "zu" {
+                lemma_parts.pop();
+            }
+
             lemma_parts.push(lemma_lc.clone());
             return lemma_parts.join("#");
         }
@@ -145,19 +140,37 @@ where
     }
 }
 
-fn longest_prefixes<S>(prefix_set: &Set, s: S) -> Vec<String>
+fn longest_prefixes<F, L>(prefix_set: &Set, form: F, lemma: L) -> Vec<String>
 where
-    S: AsRef<str>,
+    F: AsRef<str>,
+    L: AsRef<str>,
 {
-    let mut stripped = s.as_ref();
+    let lemma = lemma.as_ref();
+    let mut stripped = form.as_ref();
 
     let mut prefixes = Vec::new();
     while let Some(prefix) = longest_prefix(prefix_set, &stripped) {
+        // Prefix should not end with lemma. E.g.:
+        // abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
+        if lemma.starts_with(&prefix) || prefix.ends_with(&lemma) ||
+            !is_verb(&stripped[prefix.len()..])
+        {
+            break;
+        }
+
         stripped = &stripped[prefix.len()..];
         prefixes.push(prefix);
     }
 
     prefixes
+}
+
+fn is_verb<S>(verb: S) -> bool
+where
+    S: AsRef<str>,
+{
+    // A separable verb with a length shorter than 3 is unlikely.
+    verb.as_ref().len() > 2
 }
 
 fn longest_prefix<S>(prefix_set: &Set, s: S) -> Option<String>
