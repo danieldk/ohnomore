@@ -29,9 +29,6 @@ impl<'a> Automaton for PrefixAutomaton<'a> {
     }
 
     fn is_match(&self, state: &Self::State) -> bool {
-        // Fixme: a possible improvement: only accept prefixes that
-        // consist of complete codepoints.
-
         match state {
             &PrefixAutomatonState::Sink => false,
             &PrefixAutomatonState::State(idx) => self.0.is_char_boundary(idx),
