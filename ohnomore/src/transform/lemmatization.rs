@@ -242,6 +242,26 @@ mod tests {
         );
     }
 
+    #[test]
+    pub fn mark_verb_prefix2() {
+        let prefix_verbs = HashMap::from_iter(vec![
+            (
+                String::from("abbestellen"),
+                String::from("ab#bestellen")
+            ),
+        ]);
+        let reader = BufReader::new(File::open("data/tdz10-separable-prefixes.txt").unwrap());
+        let prefixes = read_prefixes(reader).unwrap();
+
+        run_test_cases(
+            "testdata/mark-test-cases.test",
+            MarkVerbPrefix {
+                prefix_verbs,
+                prefixes,
+            },
+        );
+    }
+
     fn read_prefixes<R>(r: R) -> Result<Set>
     where
         R: BufRead,
