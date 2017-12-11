@@ -1,6 +1,6 @@
 use petgraph::graph::{DiGraph, NodeIndex};
 
-type DependencyGraph<T> = DiGraph<T, String>;
+pub type DependencyGraph<T> = DiGraph<T, String>;
 
 pub trait Token {
     fn form(&self) -> &str;

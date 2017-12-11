@@ -95,6 +95,15 @@ pub struct MarkVerbPrefix {
     prefixes: Set,
 }
 
+impl MarkVerbPrefix {
+    pub fn new(prefix_verbs: HashMap<String, String>, prefixes: Set) -> Self {
+        MarkVerbPrefix {
+            prefix_verbs,
+            prefixes,
+        }
+    }
+}
+
 impl<T> Transform<T> for MarkVerbPrefix
 where
     T: Token,
