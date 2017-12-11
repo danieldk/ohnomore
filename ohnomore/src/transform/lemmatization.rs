@@ -26,9 +26,10 @@ where
             return lemma.to_owned();
         }
 
-        match graph.edges_directed(node, Direction::Outgoing).find(|e| {
-            e.weight() == AUXILIARY_RELATION
-        }) {
+        match graph
+            .edges_directed(node, Direction::Outgoing)
+            .find(|e| e.weight() == AUXILIARY_RELATION)
+        {
             Some(edge) => {
                 if lemma == PASSIVE_VERB_LEMMA && graph[edge.target()].tag() == PARTICIPLE_TAG {
                     format!("{}{}", lemma, PASSIVE_MARKER)
@@ -64,11 +65,9 @@ where
         //
         // Fixme: check AVZ/KON relation as well?
         // Fixme: what about particles linked KON?
-        let mut prefix_iter = graph.edges_directed(node, Direction::Outgoing).filter(
-            |e| {
-                graph[e.target()].tag() == SEPARABLE_PARTICLE_POS
-            },
-        );
+        let mut prefix_iter = graph
+            .edges_directed(node, Direction::Outgoing)
+            .filter(|e| graph[e.target()].tag() == SEPARABLE_PARTICLE_POS);
 
         if self.multiple_prefixes {
             let mut lemmas = Vec::new();
@@ -156,7 +155,7 @@ where
 /// fst crate. Instead, we repeatedly search prefixes in the set.
 fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<(&'a str, Vec<String>)> {
     let mut result = Vec::new();
-    
+
     let mut q = VecDeque::new();
     q.push_back((s, vec![]));
 
@@ -187,7 +186,13 @@ where
         prefixes.push(prefix.to_owned());
     }
 
-    prefixes.into_iter().map(|p| String::from_utf8(p).expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix")).collect()
+    prefixes
+        .into_iter()
+        .map(|p| {
+            String::from_utf8(p)
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix")
+        })
+        .collect()
 }
 
 fn longest_prefixes<F, L>(prefix_set: &Set, form: F, lemma: L) -> Vec<String>
@@ -197,35 +202,40 @@ where
 {
     let lemma = lemma.as_ref();
     let form = form.as_ref();
-       
+
     let all_prefixes = prefix_star(prefix_set, form);
 
-    let prefixes_candidates: Vec<_> = all_prefixes.into_iter().filter(|&(stripped, ref prefixes)| {
-        if prefixes.is_empty() {
-            return true;
-        }
+    let prefixes_candidates: Vec<_> = all_prefixes
+        .into_iter()
+        .filter(|&(stripped, ref prefixes)| {
+            if prefixes.is_empty() {
+                return true;
+            }
 
-        let last_prefix = prefixes.last().unwrap();
+            let last_prefix = prefixes.last().unwrap();
 
-        // Do not start stripping parts of the lemma
-        !prefixes.iter().any(|p| lemma.starts_with(p)) &&
+            // Do not start stripping parts of the lemma
+            !prefixes.iter().any(|p| lemma.starts_with(p)) &&
 
         // Prefix should not end with lemma. E.g.:
         // abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
-        !last_prefix.ends_with(&lemma) &&
+        !last_prefix.ends_with(&lemma) && is_verb(stripped)
+        })
+        .collect();
 
-        is_verb(stripped)
-    }).collect();
+    prefixes_candidates
+        .into_iter()
+        .max_by(|l, r| {
+            match l.0.len().cmp(&r.0.len()) {
+                Ordering::Less => return Ordering::Greater,
+                Ordering::Greater => return Ordering::Less,
+                Ordering::Equal => (),
+            }
 
-    prefixes_candidates.into_iter().max_by(|l, r| {
-        match l.0.len().cmp(&r.0.len()) {
-            Ordering::Less => return Ordering::Greater,
-            Ordering::Greater => return Ordering::Less,
-            Ordering::Equal => ()
-        }
-
-        l.1.len().cmp(&r.1.len()).reverse()
-    }).map(|t| t.1).unwrap_or(Vec::new())
+            l.1.len().cmp(&r.1.len()).reverse()
+        })
+        .map(|t| t.1)
+        .unwrap_or(Vec::new())
 }
 
 fn is_verb<S>(verb: S) -> bool
@@ -259,17 +269,16 @@ mod tests {
     pub fn add_separated_verb_prefix() {
         run_test_cases(
             "testdata/add-separated-verb-prefix.test",
-            AddSeparatedVerbPrefix { multiple_prefixes: true },
+            AddSeparatedVerbPrefix {
+                multiple_prefixes: true,
+            },
         );
     }
 
     #[test]
     pub fn mark_verb_prefix() {
         let prefix_verbs = HashMap::from_iter(vec![
-            (
-                String::from("abbestellen"),
-                String::from("ab#bestellen")
-            ),
+            (String::from("abbestellen"), String::from("ab#bestellen")),
         ]);
         let reader = BufReader::new(File::open("data/tdz10-separable-prefixes.txt").unwrap());
         let prefixes = read_prefixes(reader).unwrap();
