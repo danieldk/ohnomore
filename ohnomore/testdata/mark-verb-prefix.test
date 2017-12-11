@@ -4,9 +4,13 @@
 # Lookup table
 _ abbestellen VVFIN ab#bestellen
 
-# Derive from form.
+# Derive from form
 dazugefügt       fügen    VVFIN dazu#fügen
 wiedergutgemacht machen   VVFIN wieder#gut#machen
 abzuarbeiten     arbeiten VVIZU ab#arbeiten
 abgefangen       fangen   VVPP  ab#fangen
 abhing           hängen   VVFIN ab#hängen
+
+# 'zustande' is a particle, so here we do not want to match the
+# longest common prefix.
+zustanden        stehen   VVFIN zu#stehen
