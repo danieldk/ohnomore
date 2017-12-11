@@ -134,13 +134,8 @@ where
         // Case 2: there are no prefixes in the lemma, try to find prefixes
         // in the form.
         let form_lc = token.form().to_lowercase();
-        let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc);
+        let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc, token.tag());
         if !lemma_parts.is_empty() {
-            // abzuarbeiten arbeiten -> ab#arbeiten, not: ab#zu#arbeiten
-            if token.tag() == ZU_INFINITIVE_VERB && lemma_parts.last().unwrap() == "zu" {
-                lemma_parts.pop();
-            }
-
             lemma_parts.push(lemma_lc.clone());
             return lemma_parts.join("#");
         }
@@ -195,13 +190,15 @@ where
         .collect()
 }
 
-fn longest_prefixes<F, L>(prefix_set: &Set, form: F, lemma: L) -> Vec<String>
+fn longest_prefixes<F, L, T>(prefix_set: &Set, form: F, lemma: L, tag: T) -> Vec<String>
 where
     F: AsRef<str>,
     L: AsRef<str>,
+    T: AsRef<str>,
 {
     let lemma = lemma.as_ref();
     let form = form.as_ref();
+    let tag = tag.as_ref();
 
     let all_prefixes = prefix_star(prefix_set, form);
 
@@ -214,12 +211,18 @@ where
 
             let last_prefix = prefixes.last().unwrap();
 
-            // Do not start stripping parts of the lemma
-            !prefixes.iter().any(|p| lemma.starts_with(p)) &&
+            // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
+            if tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
+                && !stripped.starts_with("zu")
+            {
+                return false;
+            }
 
-        // Prefix should not end with lemma. E.g.:
-        // abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
-        !last_prefix.ends_with(&lemma) && is_verb(stripped)
+            // 1. Do not start stripping parts of the lemma
+            // 2. Prefix should not end with lemma. E.g.:
+            //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
+            !prefixes.iter().any(|p| lemma.starts_with(p)) && !last_prefix.ends_with(&lemma)
+                && is_verb(stripped)
         })
         .collect();
 
