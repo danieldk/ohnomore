@@ -11,12 +11,16 @@ abzuarbeiten     arbeiten VVIZU ab#arbeiten
 abgefangen       fangen   VVPP  ab#fangen
 abhing           hängen   VVFIN ab#hängen
 
+# Multiple prefixes
+mitabgedruckt drucken VVFIN mit#ab#drucken
+
 # 'zustande' is a particle, so here we do not want to match the
 # longest common prefix.
 zustanden        stehen   VVFIN zu#stehen
 
 # 'hinzu' is a particle, check that we don't analysze as 'hinzu#bewegen'
-hinzubewegen bewegen VVIZU hin#bewegen
-zuzuspitzen  spitzen VVIZU zu#spitzen
-hinzuwirken  wirken  VVIZU hin#wirken
-hinzuzufügen fügen   VVIZU hinzu#fügen
+hinzubewegen   bewegen VVIZU hin#bewegen
+zuzuspitzen    spitzen VVIZU zu#spitzen
+hinzuwirken    wirken  VVIZU hin#wirken
+hinzuzufügen   fügen   VVIZU hinzu#fügen
+mitaufzunehmen nehmen  VVIZU mit#auf#nehmen
