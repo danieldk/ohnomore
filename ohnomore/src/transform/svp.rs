@@ -7,24 +7,43 @@ use constants::*;
 
 use automaton::PrefixAutomaton;
 
+/// Candidate list of prefixes and the corresponding stripped form.
+struct PrefixesCandidate<'a> {
+    stripped_form: &'a str,
+    prefixes: Vec<String>,
+}
+
 /// Look for all matches of (prefix)* in the given form. Ideally,
 /// we'd construct a Kleene star automaton of the prefix automaton.
 /// Unfortunately, this functionality is not (yet) provided by the
 /// fst crate. Instead, we repeatedly search prefixes in the set.
-fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<(&'a str, Vec<String>)> {
+fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<PrefixesCandidate<'a>> {
     let mut result = Vec::new();
 
     let mut q = VecDeque::new();
-    q.push_back((s, vec![]));
+    q.push_back(PrefixesCandidate {
+        stripped_form: s,
+        prefixes: Vec::new(),
+    });
 
-    while let Some((stripped_s, prefixes)) = q.pop_front() {
-        result.push((stripped_s, prefixes.clone()));
+    while let Some(PrefixesCandidate {
+        stripped_form,
+        prefixes,
+    }) = q.pop_front()
+    {
+        result.push(PrefixesCandidate {
+            stripped_form,
+            prefixes: prefixes.clone(),
+        });
 
-        for prefix in find_prefixes(prefix_set, stripped_s) {
+        for prefix in find_prefixes(prefix_set, stripped_form) {
             let mut prefixes = prefixes.clone();
             let prefix_len = prefix.len();
             prefixes.push(prefix);
-            q.push_back((&stripped_s[prefix_len..], prefixes));
+            q.push_back(PrefixesCandidate {
+                stripped_form: &stripped_form[prefix_len..],
+                prefixes,
+            });
         }
     }
 
@@ -67,7 +86,9 @@ where
 
     let prefixes_candidates: Vec<_> = all_prefixes
         .into_iter()
-        .filter(|&(stripped, ref prefixes)| {
+        .filter(|candidate| {
+            let prefixes = &candidate.prefixes;
+
             if prefixes.is_empty() {
                 return true;
             }
@@ -76,7 +97,7 @@ where
 
             // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
             if tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
-                && !stripped.starts_with("zu")
+                && !candidate.stripped_form.starts_with("zu")
             {
                 return false;
             }
@@ -85,22 +106,22 @@ where
             // 2. Prefix should not end with lemma. E.g.:
             //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
             !prefixes.iter().any(|p| lemma.starts_with(p)) && !last_prefix.ends_with(&lemma)
-                && is_verb(stripped)
+                && is_verb(candidate.stripped_form)
         })
         .collect();
 
     prefixes_candidates
         .into_iter()
         .max_by(|l, r| {
-            match l.0.len().cmp(&r.0.len()) {
+            match l.stripped_form.len().cmp(&r.stripped_form.len()) {
                 Ordering::Less => return Ordering::Greater,
                 Ordering::Greater => return Ordering::Less,
                 Ordering::Equal => (),
             }
 
-            l.1.len().cmp(&r.1.len()).reverse()
+            l.prefixes.len().cmp(&r.prefixes.len()).reverse()
         })
-        .map(|t| t.1)
+        .map(|t| t.prefixes)
         .unwrap_or(Vec::new())
 }
 
