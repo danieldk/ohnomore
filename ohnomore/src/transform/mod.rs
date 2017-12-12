@@ -19,5 +19,7 @@ pub mod delemmatization;
 
 pub mod lemmatization;
 
+mod svp;
+
 #[cfg(test)]
 pub(crate) mod test_helpers;
