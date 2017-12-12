@@ -72,40 +72,6 @@ where
         .collect()
 }
 
-fn filter_prefixes<'a, I>(
-    iter: I,
-    lemma: &'a str,
-    tag: &'a str,
-) -> Box<Iterator<Item = PrefixesCandidate<'a>> + 'a>
-where
-    I: 'a + IntoIterator<Item = PrefixesCandidate<'a>>,
-{
-    let filter = iter.into_iter().filter(move |candidate| {
-        let prefixes = &candidate.prefixes;
-
-        if prefixes.is_empty() {
-            return true;
-        }
-
-        let last_prefix = prefixes.last().unwrap();
-
-        // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
-        if tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
-            && !candidate.stripped_form.starts_with("zu")
-        {
-            return false;
-        }
-
-        // 1. Do not start stripping parts of the lemma
-        // 2. Prefix should not end with lemma. E.g.:
-        //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
-        !prefixes.iter().any(|p| lemma.starts_with(p)) && !last_prefix.ends_with(&lemma)
-            && is_verb(candidate.stripped_form)
-    });
-
-    Box::new(filter)
-}
-
 pub fn longest_prefixes<F, L, T>(prefix_set: &Set, form: F, lemma: L, tag: T) -> Vec<String>
 where
     F: AsRef<str>,
@@ -118,16 +84,19 @@ where
 
     let all_prefixes = prefix_star(prefix_set, form);
 
-    filter_prefixes(all_prefixes, lemma, tag)
-        .max_by(|l, r| {
-            match l.stripped_form.len().cmp(&r.stripped_form.len()) {
-                Ordering::Less => return Ordering::Greater,
-                Ordering::Greater => return Ordering::Less,
-                Ordering::Equal => (),
-            }
+    FilterPrefixes {
+        inner: all_prefixes.into_iter(),
+        lemma,
+        tag,
+    }.max_by(|l, r| {
+        match l.stripped_form.len().cmp(&r.stripped_form.len()) {
+            Ordering::Less => return Ordering::Greater,
+            Ordering::Greater => return Ordering::Less,
+            Ordering::Equal => (),
+        }
 
-            l.prefixes.len().cmp(&r.prefixes.len()).reverse()
-        })
+        l.prefixes.len().cmp(&r.prefixes.len()).reverse()
+    })
         .map(|t| t.prefixes)
         .unwrap_or(Vec::new())
 }
@@ -138,4 +107,53 @@ where
 {
     // A separable verb with a length shorter than 3 is unlikely.
     verb.as_ref().len() > 2
+}
+
+struct FilterPrefixes<'a, I>
+where
+    I: Iterator<Item = PrefixesCandidate<'a>>,
+{
+    lemma: &'a str,
+    tag: &'a str,
+    inner: I,
+}
+
+impl<'a, I> Iterator for FilterPrefixes<'a, I>
+where
+    I: Iterator<Item = PrefixesCandidate<'a>>,
+{
+    type Item = PrefixesCandidate<'a>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(candidate) = self.inner.next() {
+            if candidate.prefixes.is_empty() {
+                return Some(candidate);
+            }
+
+            // I don't like the to_owned() here, but as of 1.14-nightly, the
+            // borrows checker is not happy about moving candidate otherwise.
+            let last_prefix = candidate.prefixes.last().unwrap().to_owned();
+
+            // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
+            if self.tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
+                && !candidate.stripped_form.starts_with("zu")
+            {
+                continue;
+            }
+
+            // 1. Do not start stripping parts of the lemma
+            // 2. Prefix should not end with lemma. E.g.:
+            //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
+            if candidate.prefixes.iter().any(|p| self.lemma.starts_with(p))
+                || last_prefix.ends_with(&self.lemma)
+                || !is_verb(candidate.stripped_form)
+            {
+                continue;
+            }
+
+            return Some(candidate);
+        }
+
+        None
+    }
 }
