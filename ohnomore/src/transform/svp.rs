@@ -72,6 +72,40 @@ where
         .collect()
 }
 
+fn filter_prefixes<'a, I>(
+    iter: I,
+    lemma: &'a str,
+    tag: &'a str,
+) -> Box<Iterator<Item = PrefixesCandidate<'a>> + 'a>
+where
+    I: 'a + IntoIterator<Item = PrefixesCandidate<'a>>,
+{
+    let filter = iter.into_iter().filter(move |candidate| {
+        let prefixes = &candidate.prefixes;
+
+        if prefixes.is_empty() {
+            return true;
+        }
+
+        let last_prefix = prefixes.last().unwrap();
+
+        // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
+        if tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
+            && !candidate.stripped_form.starts_with("zu")
+        {
+            return false;
+        }
+
+        // 1. Do not start stripping parts of the lemma
+        // 2. Prefix should not end with lemma. E.g.:
+        //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
+        !prefixes.iter().any(|p| lemma.starts_with(p)) && !last_prefix.ends_with(&lemma)
+            && is_verb(candidate.stripped_form)
+    });
+
+    Box::new(filter)
+}
+
 pub fn longest_prefixes<F, L, T>(prefix_set: &Set, form: F, lemma: L, tag: T) -> Vec<String>
 where
     F: AsRef<str>,
@@ -84,34 +118,7 @@ where
 
     let all_prefixes = prefix_star(prefix_set, form);
 
-    let prefixes_candidates: Vec<_> = all_prefixes
-        .into_iter()
-        .filter(|candidate| {
-            let prefixes = &candidate.prefixes;
-
-            if prefixes.is_empty() {
-                return true;
-            }
-
-            let last_prefix = prefixes.last().unwrap();
-
-            // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
-            if tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
-                && !candidate.stripped_form.starts_with("zu")
-            {
-                return false;
-            }
-
-            // 1. Do not start stripping parts of the lemma
-            // 2. Prefix should not end with lemma. E.g.:
-            //    abgefangen fangen -> ab#fangen, not: ab#gefangen#fangen
-            !prefixes.iter().any(|p| lemma.starts_with(p)) && !last_prefix.ends_with(&lemma)
-                && is_verb(candidate.stripped_form)
-        })
-        .collect();
-
-    prefixes_candidates
-        .into_iter()
+    filter_prefixes(all_prefixes, lemma, tag)
         .max_by(|l, r| {
             match l.stripped_form.len().cmp(&r.stripped_form.len()) {
                 Ordering::Less => return Ordering::Greater,
