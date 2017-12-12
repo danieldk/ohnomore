@@ -18,3 +18,5 @@ zustanden        stehen   VVFIN zu#stehen
 # 'hinzu' is a particle, check that we don't analysze as 'hinzu#bewegen'
 hinzubewegen bewegen VVIZU hin#bewegen
 zuzuspitzen  spitzen VVIZU zu#spitzen
+hinzuwirken  wirken  VVIZU hin#wirken
+hinzuzufügen fügen   VVIZU hinzu#fügen
