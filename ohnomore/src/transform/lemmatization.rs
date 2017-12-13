@@ -31,13 +31,27 @@ where
         {
             Some(edge) => {
                 if lemma == PASSIVE_VERB_LEMMA && graph[edge.target()].tag() == PARTICIPLE_TAG {
-                    format!("{}{}", lemma, PASSIVE_MARKER)
+                    return format!("{}{}", lemma, PASSIVE_MARKER);
                 } else {
-                    format!("{}{}", lemma, AUXILIARY_MARKER)
+                    return format!("{}{}", lemma, AUXILIARY_MARKER);
                 }
             }
-            None => lemma.to_owned(),
+            None => (),
+        };
+
+        // There are no outgoing edges with the auxiliary relation.
+        // Check that this verb is not an adverbial modification of
+        // an infinitive.
+        for edge in graph.edges_directed(node, Direction::Incoming) {
+            let head_tag = graph[edge.source()].tag();
+            if edge.weight() == ADVERBIAL_RELATION
+                && (head_tag == INFINITIVE_VERB_TAG || head_tag == PARTICIPLE_TAG)
+            {
+                return format!("{}{}", lemma, AUXILIARY_MARKER);
+            }
         }
+
+        lemma.to_owned()
     }
 }
 

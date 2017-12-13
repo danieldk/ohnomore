@@ -19,3 +19,7 @@ _ werden VAFIN werden        _ _ _ _ OBJA _ _ _
 # Anomalies
 _ laufen VVFIN laufen _ _ _ _ AUX  _ _ VVINF
 _ laufen VVFIN laufen _ _ _ _ AUX  _ _ VVPP
+
+# Auxiliary as an adverbial modifier of a verb.
+_ haben VAFIN haben%aux ADV _ _ VVINF
+_ haben VAFIN haben%aux ADV _ _ VVPP

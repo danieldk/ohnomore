@@ -9,7 +9,9 @@ pub static VERB_PREFIX: &str = "V";
 
 pub static PARTICIPLE_TAG: &str = "VVPP";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
+pub static INFINITIVE_VERB_TAG: &str = "VVINF";
 
+pub static ADVERBIAL_RELATION: &str = "ADV";
 pub static AUXILIARY_RELATION: &str = "AUX";
 pub static SEP_VERB_PREFIX_RELATION: &str = "AVZ";
 
