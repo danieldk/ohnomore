@@ -15,6 +15,8 @@ where
     fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String;
 }
 
+mod auxpassiv;
+
 pub mod delemmatization;
 
 pub mod lemmatization;

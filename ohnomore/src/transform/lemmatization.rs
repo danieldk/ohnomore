@@ -7,6 +7,7 @@ use petgraph::visit::EdgeRef;
 
 use constants::*;
 
+use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use transform::{DependencyGraph, Token, Transform};
 use transform::svp::longest_prefixes;
 
@@ -25,19 +26,34 @@ where
             return lemma.to_owned();
         }
 
-        match graph
+        // Find the verb's lemma tag.
+        match verb_lemma_tag(graph, node) {
+            VerbLemmaTag::Auxiliary => return format!("{}{}", lemma, AUXILIARY_MARKER),
+            VerbLemmaTag::Passive => return format!("{}{}", lemma, PASSIVE_MARKER),
+            VerbLemmaTag::None => (),
+        }
+
+        // If the verb lemma tag was none, it could be that a verb
+        // is indirectly attached to the auxiliary through conjunction.
+        //
+        // E.g.: "Sie wollen und werden ein Schauspielhaus fertigstellen."
+        if graph
             .edges_directed(node, Direction::Outgoing)
-            .find(|e| e.weight() == AUXILIARY_RELATION)
+            .find(|e| e.weight() != PUNCTUATION_RELATION)
+            .is_none()
         {
-            Some(edge) => {
-                if lemma == PASSIVE_VERB_LEMMA && graph[edge.target()].tag() == PARTICIPLE_TAG {
-                    return format!("{}{}", lemma, PASSIVE_MARKER);
-                } else {
-                    return format!("{}{}", lemma, AUXILIARY_MARKER);
+            if let Some(node) = ancestor_path(
+                graph,
+                node,
+                &[CONJ_COMPLEMENT_RELATION, COORDINATION_RELATION],
+            ) {
+                match verb_lemma_tag(graph, node) {
+                    VerbLemmaTag::Auxiliary => return format!("{}{}", lemma, AUXILIARY_MARKER),
+                    VerbLemmaTag::Passive => return format!("{}{}", lemma, PASSIVE_MARKER),
+                    VerbLemmaTag::None => (),
                 }
             }
-            None => (),
-        };
+        }
 
         // There are no outgoing edges with the auxiliary relation.
         // Check that this verb is not an adverbial modification of

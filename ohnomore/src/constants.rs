@@ -13,6 +13,9 @@ pub static INFINITIVE_VERB_TAG: &str = "VVINF";
 
 pub static ADVERBIAL_RELATION: &str = "ADV";
 pub static AUXILIARY_RELATION: &str = "AUX";
+pub static CONJ_COMPLEMENT_RELATION: &str = "CJ";
+pub static COORDINATION_RELATION: &str = "KON";
+pub static PUNCTUATION_RELATION: &str = "-PUNCT-";
 pub static SEP_VERB_PREFIX_RELATION: &str = "AVZ";
 
 pub static PASSIVE_VERB_LEMMA: &str = "werden";
