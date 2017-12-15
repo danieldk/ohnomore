@@ -7,8 +7,12 @@ pub static SEPARABLE_PARTICLE_POS: &str = "PTKVZ";
 
 pub static AUXILIARY_PREFIX: &str = "VA";
 pub static MODAL_PREFIX: &str = "VM";
+pub static PUNCTUATION_PREFIX: &str = "$";
 pub static VERB_PREFIX: &str = "V";
 
+pub static FOREIGN_WORD_TAG: &str = "FM";
+pub static NON_WORD_TAG: &str = "XY";
+pub static NOUN_TAG: &str = "NN";
 pub static PARTICIPLE_TAG: &str = "VVPP";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
 pub static INFINITIVE_VERB_TAG: &str = "VVINF";
@@ -23,7 +27,14 @@ pub static SEP_VERB_PREFIX_RELATION: &str = "AVZ";
 pub static PASSIVE_VERB_LEMMA: &str = "werden";
 
 lazy_static! {
+    pub static ref NO_LEMMA_TAGS: HashSet<&'static str> = hashset! {
+        "PTKVZ"
+    };
+
     pub static ref LEMMA_IS_FORM_TAGS: HashSet<&'static str> = hashset! {
+        "$,",
+        "$.",
+        "$(",
         "ADV",
         "APPR",
         "APPO",
@@ -38,7 +49,18 @@ lazy_static! {
         "CARD",
         "PTKZU",
         "PTKA",
-        "PTKNEG"
+        "PTKNEG",
+        "TRUNC" // For now...
+    };
+
+    /// Part-of-speech tags that have special (non-word) lemmas.
+    pub static ref SPECIAL_LEMMA_TAGS: HashSet<&'static str> = hashset! {
+        "ART",
+        "PDS",
+        "PPER",
+        "PPOSAT",
+        "PRF",
+        "PRELS",
     };
 }
 
