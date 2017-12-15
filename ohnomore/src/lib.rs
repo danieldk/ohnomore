@@ -1,5 +1,11 @@
 extern crate fst;
 
+#[macro_use]
+extern crate lazy_static;
+
+#[macro_use]
+extern crate maplit;
+
 extern crate petgraph;
 
 pub mod automaton;

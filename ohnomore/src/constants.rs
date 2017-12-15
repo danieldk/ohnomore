@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 pub static AUXILIARY_MARKER: &str = "%aux";
 pub static PASSIVE_MARKER: &str = "%passiv";
 
@@ -19,6 +21,26 @@ pub static PUNCTUATION_RELATION: &str = "-PUNCT-";
 pub static SEP_VERB_PREFIX_RELATION: &str = "AVZ";
 
 pub static PASSIVE_VERB_LEMMA: &str = "werden";
+
+lazy_static! {
+    pub static ref LEMMA_IS_FORM_TAGS: HashSet<&'static str> = hashset! {
+        "ADV",
+        "APPR",
+        "APPO",
+        "APZR",
+        "FM",
+        "ITJ",
+        "KOUI",
+        "KOUS",
+        "KON",
+        "KOKOM",
+        "ADJD",
+        "CARD",
+        "PTKZU",
+        "PTKA",
+        "PTKNEG"
+    };
+}
 
 pub fn is_verb<S>(tag: S) -> bool
 where
