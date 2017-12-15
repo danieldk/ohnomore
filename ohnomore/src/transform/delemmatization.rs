@@ -3,6 +3,30 @@ use petgraph::graph::NodeIndex;
 use constants::*;
 use transform::{DependencyGraph, Token, Transform};
 
+pub struct RemoveAlternatives;
+
+impl<T> Transform<T> for RemoveAlternatives
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let mut lemma = token.lemma();
+
+        if token.tag().starts_with(PUNCTUATION_PREFIX) || token.tag() == NON_WORD_TAG
+            || token.tag() == FOREIGN_WORD_TAG
+        {
+            return lemma.to_owned();
+        }
+
+        if let Some(idx) = lemma.find('|') {
+            lemma = &lemma[..idx];
+        }
+
+        lemma.to_owned()
+    }
+}
+
 pub struct RemoveAuxTag;
 
 impl<T> Transform<T> for RemoveAuxTag
