@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate error_chain;
+
 extern crate fst;
 
 #[macro_use]
@@ -14,8 +17,12 @@ pub mod constants;
 
 pub mod error;
 
+pub mod lookup;
+
+extern crate serde;
+
 #[macro_use]
-extern crate error_chain;
+extern crate serde_derive;
 
 pub mod transform;
 
