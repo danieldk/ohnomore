@@ -3,6 +3,8 @@ extern crate error_chain;
 
 extern crate fst;
 
+extern crate hdf5;
+
 extern crate itertools;
 
 #[macro_use]

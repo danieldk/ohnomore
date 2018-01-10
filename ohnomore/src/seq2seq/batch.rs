@@ -3,6 +3,55 @@ use tensorflow::Tensor;
 
 use lookup::Lookup;
 
+pub struct InputVector {
+    chars: Vec<usize>,
+    tag: usize,
+}
+
+impl InputVector {
+    pub fn chars(&self) -> &[usize] {
+        &self.chars
+    }
+
+    pub fn tag(&self) -> usize {
+        self.tag
+    }
+}
+
+pub struct InputVectorizer {
+    char_lookup: Box<Lookup<char>>,
+    tag_lookup: Box<Lookup<String>>,
+}
+
+impl InputVectorizer where {
+    pub fn new(char_lookup: Box<Lookup<char>>, tag_lookup: Box<Lookup<String>>) -> Self {
+        InputVectorizer {
+            char_lookup,
+            tag_lookup,
+        }
+    }
+
+    pub fn vectorize<S>(&self, token: S, tag: &String) -> InputVector
+    where
+        S: AsRef<str>,
+    {
+        let chars = token
+            .as_ref()
+            .chars()
+            .map(|c| {
+                self.char_lookup
+                    .lookup(&c)
+                    .unwrap_or(self.char_lookup.null())
+            })
+            .collect();
+        let tag = self.tag_lookup
+            .lookup(tag)
+            .unwrap_or(self.tag_lookup.null());
+
+        InputVector { chars, tag }
+    }
+}
+
 pub struct Batch<W, T> {
     tokens: W,
     tags: T,
