@@ -10,7 +10,8 @@ use std::env::args;
 use getopts::Options;
 use ohnomore::constants::{LEMMA_IS_FORM_TAGS, NO_LEMMA_TAGS, SPECIAL_LEMMA_TAGS};
 use ohnomore::transform::{Token, Transform};
-use ohnomore::transform::delemmatization::{RemoveAlternatives, RemoveAuxTag, RemovePassivTag, RemoveSepVerbPrefix};
+use ohnomore::transform::delemmatization::{RemoveAlternatives, RemoveAuxTag, RemovePassivTag,
+                                           RemoveSepVerbPrefix};
 use ohnomore_utils::graph::sentence_to_gold_graph;
 use petgraph::graph::NodeIndex;
 use stdinout::{Input, OrExit};
@@ -22,8 +23,10 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
-fn apply_transformations<T>(g: &mut GoldDependencyGraph, idx: NodeIndex,
-                            transformations: &[T]) where T: AsRef<Transform<GoldToken>> {
+fn apply_transformations<T>(g: &mut GoldDependencyGraph, idx: NodeIndex, transformations: &[T])
+where
+    T: AsRef<Transform<GoldToken>>,
+{
     for t in transformations {
         let lemma = t.as_ref().transform(g, idx);
         g[idx].set_lemma(lemma);
@@ -49,7 +52,12 @@ fn main() {
         return;
     }
 
-    let transforms: &[Box<Transform<GoldToken>>] = &[Box::new(RemoveAlternatives), Box::new(RemoveAuxTag), Box::new(RemovePassivTag), Box::new(RemoveSepVerbPrefix)];
+    let transforms: &[Box<Transform<GoldToken>>] = &[
+        Box::new(RemoveAlternatives),
+        Box::new(RemoveAuxTag),
+        Box::new(RemovePassivTag),
+        Box::new(RemoveSepVerbPrefix),
+    ];
 
     let input = Input::from(matches.free.get(0));
     let reader = conllx::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
@@ -61,7 +69,9 @@ fn main() {
         for node in graph.node_indices() {
             {
                 let pos = graph[node].tag();
-                if LEMMA_IS_FORM_TAGS.contains(pos) || NO_LEMMA_TAGS.contains(pos) || SPECIAL_LEMMA_TAGS.contains(pos) {
+                if LEMMA_IS_FORM_TAGS.contains(pos) || NO_LEMMA_TAGS.contains(pos)
+                    || SPECIAL_LEMMA_TAGS.contains(pos)
+                {
                     continue;
                 }
             }

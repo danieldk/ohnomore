@@ -19,7 +19,10 @@ pub struct GoldToken {
 }
 
 impl GoldToken {
-    pub fn set_lemma<L>(&mut self, lemma: L) where L: Into<String> {
+    pub fn set_lemma<L>(&mut self, lemma: L)
+    where
+        L: Into<String>,
+    {
         self.lemma = lemma.into()
     }
 }
@@ -47,8 +50,11 @@ pub fn sentence_to_gold_graph(sentence: &Sentence) -> Result<GoldDependencyGraph
     for token in sentence {
         let token = GoldToken {
             form: token.form().to_owned(),
-            tag: token.pos().ok_or(ErrorKind::MissingTagLayer(format!("{}", token)))?.to_owned(),
-            lemma: token.lemma().unwrap_or("_").to_owned()
+            tag: token
+                .pos()
+                .ok_or(ErrorKind::MissingTagLayer(format!("{}", token)))?
+                .to_owned(),
+            lemma: token.lemma().unwrap_or("_").to_owned(),
         };
 
         nodes.push(g.add_node(token));
