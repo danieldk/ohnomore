@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 pub static AUXILIARY_MARKER: &str = "%aux";
 pub static PASSIVE_MARKER: &str = "%passiv";
+pub static REFLEXIVE_PERSONAL_PRONOUN_LEMMA: &str = "#refl";
 
 pub static SEPARABLE_PARTICLE_POS: &str = "PTKVZ";
 
@@ -14,6 +15,7 @@ pub static FOREIGN_WORD_TAG: &str = "FM";
 pub static NON_WORD_TAG: &str = "XY";
 pub static NOUN_TAG: &str = "NN";
 pub static PARTICIPLE_TAG: &str = "VVPP";
+pub static REFLEXIVE_PERSONAL_PRONOUN_TAG: &str = "PRF";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
 pub static INFINITIVE_VERB_TAG: &str = "VVINF";
 

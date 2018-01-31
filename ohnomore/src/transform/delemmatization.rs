@@ -69,6 +69,26 @@ where
     }
 }
 
+pub struct RemoveReflexiveTag;
+
+impl<T> Transform<T> for RemoveReflexiveTag
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let lemma = token.lemma();
+
+        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG
+            && lemma == REFLEXIVE_PERSONAL_PRONOUN_LEMMA
+        {
+            return token.form().to_lowercase();
+        }
+
+        lemma.to_owned()
+    }
+}
+
 pub struct RemoveSepVerbPrefix;
 
 impl<T> Transform<T> for RemoveSepVerbPrefix
