@@ -13,7 +13,7 @@ use getopts::Options;
 use ohnomore::constants::{LEMMA_IS_FORM_TAGS, NO_LEMMA_TAGS};
 use ohnomore::transform::{Token, Transform};
 use ohnomore::transform::delemmatization::{RemoveAlternatives, RemoveAuxTag, RemovePassivTag,
-                                           RemoveReflexiveTag, RemoveSepVerbPrefix};
+                                           RemoveReflexiveTag, RemoveSepVerbPrefix, RemoveTruncMarker};
 use ohnomore_utils::graph::sentence_to_graph;
 use petgraph::graph::NodeIndex;
 use stdinout::{Input, OrExit, Output};
@@ -60,6 +60,7 @@ fn main() {
         Box::new(RemovePassivTag),
         Box::new(RemoveReflexiveTag),
         Box::new(RemoveSepVerbPrefix),
+        Box::new(RemoveTruncMarker),
     ];
 
     let input = Input::from(matches.free.get(0));
