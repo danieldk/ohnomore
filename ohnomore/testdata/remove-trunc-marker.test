@@ -1,0 +1,10 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+Bau-   Bauplanung%n   TRUNC Bau-
+jahre- jahrelang%a    TRUNC jahre-
+Jahre- jahrelang%a    TRUNC jahre-
+hin-   hin#schieben%v TRUNC hin-
+
+# Should not fire for other tags
+Bau- Bauplanung%n XYZ Bauplanung%n

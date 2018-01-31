@@ -109,11 +109,39 @@ where
     }
 }
 
+pub struct RemoveTruncMarker;
+
+impl<T> Transform<T> for RemoveTruncMarker
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let lemma = token.lemma();
+
+        if token.tag() == TRUNCATED_TAG {
+            if let Some(idx) = lemma.rfind('%') {
+                let tag = &lemma[idx + 1..];
+
+                let form = if tag == "n" {
+                    token.form().to_owned()
+                } else {
+                    token.form().to_lowercase()
+                };
+
+                return form;
+            }
+        }
+
+        return lemma.to_owned();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{RemoveAuxTag, RemovePassivTag, RemoveSepVerbPrefix};
+    use super::{RemoveAuxTag, RemovePassivTag, RemoveSepVerbPrefix, RemoveTruncMarker};
 
     #[test]
     pub fn remove_auxiliary_tag() {
@@ -130,4 +158,8 @@ mod tests {
         run_test_cases("testdata/remove-sep-verb-prefix.test", RemoveSepVerbPrefix);
     }
 
+    #[test]
+    pub fn remove_trunc_marker() {
+        run_test_cases("testdata/remove-trunc-marker.test", RemoveTruncMarker);
+    }
 }

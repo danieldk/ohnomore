@@ -16,6 +16,7 @@ pub static NON_WORD_TAG: &str = "XY";
 pub static NOUN_TAG: &str = "NN";
 pub static PARTICIPLE_TAG: &str = "VVPP";
 pub static REFLEXIVE_PERSONAL_PRONOUN_TAG: &str = "PRF";
+pub static TRUNCATED_TAG: &str = "TRUNC";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
 pub static INFINITIVE_VERB_TAG: &str = "VVINF";
 
@@ -52,7 +53,6 @@ lazy_static! {
         "PTKZU",
         "PTKA",
         "PTKNEG",
-        "TRUNC" // For now...
     };
 
     /// Part-of-speech tags that have special (non-word) lemmas.
