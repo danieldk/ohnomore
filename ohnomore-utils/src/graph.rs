@@ -1,6 +1,4 @@
-use conllx;
-use conllx::Sentence;
-use ohnomore::transform::Token;
+use conllx::Token;
 use petgraph::Directed;
 use petgraph::graph::Graph;
 
@@ -8,50 +6,18 @@ use error::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DependencyNode {
-    pub token: conllx::Token,
+    pub token: Token,
     pub offset: usize,
 }
 
-pub struct GoldToken {
-    form: String,
-    tag: String,
-    lemma: String,
-}
+pub type DependencyGraph = Graph<Token, String, Directed>;
 
-impl GoldToken {
-    pub fn set_lemma<L>(&mut self, lemma: L) where L: Into<String> {
-        self.lemma = lemma.into()
-    }
-}
-
-impl Token for GoldToken {
-    fn form(&self) -> &str {
-        &self.form
-    }
-
-    fn tag(&self) -> &str {
-        &self.tag
-    }
-
-    fn lemma(&self) -> &str {
-        &self.lemma
-    }
-}
-
-pub type GoldDependencyGraph = Graph<GoldToken, String, Directed>;
-
-pub fn sentence_to_gold_graph(sentence: &Sentence) -> Result<GoldDependencyGraph> {
+pub fn sentence_to_graph(sentence: &[Token]) -> Result<DependencyGraph> {
     let mut g = Graph::new();
 
     let mut nodes = Vec::new();
-    for token in sentence {
-        let token = GoldToken {
-            form: token.form().to_owned(),
-            tag: token.pos().ok_or(ErrorKind::MissingTagLayer(format!("{}", token)))?.to_owned(),
-            lemma: token.lemma().unwrap_or("_").to_owned()
-        };
-
-        nodes.push(g.add_node(token));
+    for token in sentence.iter() {
+        nodes.push(g.add_node(token.clone()));
     }
 
     for (idx, token) in sentence.iter().enumerate() {

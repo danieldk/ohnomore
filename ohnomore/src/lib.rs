@@ -1,3 +1,5 @@
+extern crate conllx;
+
 extern crate fst;
 
 #[macro_use]
