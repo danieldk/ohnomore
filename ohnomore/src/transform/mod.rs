@@ -16,7 +16,7 @@ impl Token for conllx::Token {
     }
 
     fn lemma(&self) -> &str {
-        self.lemma().unwrap()
+        self.lemma().unwrap_or("_")
     }
 
     fn tag(&self) -> &str {
