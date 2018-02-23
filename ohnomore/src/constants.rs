@@ -11,11 +11,17 @@ pub static MODAL_PREFIX: &str = "VM";
 pub static PUNCTUATION_PREFIX: &str = "$";
 pub static VERB_PREFIX: &str = "V";
 
+pub static ARTICLE_TAG: &str = "ART";
+pub static ATTRIBUTIVE_POSSESIVE_PRONOUN_TAG: &str = "PPOSAT";
+pub static SUBST_POSSESIVE_PRONOUN_TAG: &str = "PPOSS";
 pub static FOREIGN_WORD_TAG: &str = "FM";
 pub static NON_WORD_TAG: &str = "XY";
 pub static NOUN_TAG: &str = "NN";
 pub static PARTICIPLE_TAG: &str = "VVPP";
+pub static PERSONAL_PRONOUN_TAG: &str = "PPER";
 pub static REFLEXIVE_PERSONAL_PRONOUN_TAG: &str = "PRF";
+pub static SUBST_REL_PRONOUN: &str = "PRELS";
+pub static ATTR_REL_PRONOUN: &str = "PRELAT";
 pub static TRUNCATED_TAG: &str = "TRUNC";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
 pub static INFINITIVE_VERB_TAG: &str = "VVINF";

@@ -37,6 +37,8 @@ pub mod delemmatization;
 
 pub mod lemmatization;
 
+pub mod misc;
+
 mod svp;
 
 #[cfg(test)]

@@ -1,0 +1,44 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# Substituting possesive pronouns
+Ihre     _ PPOSS ihr
+ihre     _ PPOSS ihr
+meine    _ PPOSS mein
+meinen   _ PPOSS mein
+deines   _ PPOSS dein
+seine    _ PPOSS sein
+seinen   _ PPOSS sein
+unsere   _ PPOSS unser
+unsern   _ PPOSS unser
+unsrige  _ PPOSS unsrig
+unsrigen _ PPOSS unsrig
+
+# Attributive possesive pronouns
+dein    _ PPOSAT dein
+deine   _ PPOSAT dein
+euer    _ PPOSAT euer
+eure    _ PPOSAT euer
+euren   _ PPOSAT euer
+ihr     _ PPOSAT ihr
+ihrem   _ PPOSAT ihr
+Ihre    _ PPOSAT ihr
+Ihrem   _ PPOSAT ihr
+mein    _ PPOSAT mein
+meine   _ PPOSAT mein
+meinem  _ PPOSAT mein
+sein    _ PPOSAT sein
+seine   _ PPOSAT sein
+seinem  _ PPOSAT sein
+seinen  _ PPOSAT sein
+unser   _ PPOSAT unser
+unsere  _ PPOSAT unser
+unserem _ PPOSAT unser
+
+# Use the lemma when the prefix is unknown
+unsre unsere PPOSAT unsere
+
+# Exclude other tags
+Ihre    foo XY foo
+ihre    bar XY bar
+unserem baz XY baz

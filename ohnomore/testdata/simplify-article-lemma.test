@@ -1,0 +1,31 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# Definite articles are lemmatized to 'd'
+der _ ART d
+des _ ART d
+dem _ ART d
+den _ ART d
+die _ ART d
+das _ ART d
+
+# Indefinite articles are lemmatized to 'e'
+ein   _ ART e
+eines _ ART e
+einem _ ART e
+einen _ ART e
+eine  _ ART e
+einer _ ART e
+
+# Definite articles are lemmatized to 'd'
+der _ ART d
+
+# Substituting relative pronoun
+der _ PRELS d
+
+# Attributive relative pronoun
+dessen _ PRELAT d
+
+# Do not attempt to lemmatize words with an irrelevant tag.
+der foo XY foo
+ein bar XY bar

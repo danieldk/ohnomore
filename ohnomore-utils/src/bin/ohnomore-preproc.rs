@@ -13,7 +13,9 @@ use getopts::Options;
 use ohnomore::constants::{LEMMA_IS_FORM_TAGS, NO_LEMMA_TAGS};
 use ohnomore::transform::{Token, Transform};
 use ohnomore::transform::delemmatization::{RemoveAlternatives, RemoveAuxTag, RemovePassivTag,
-                                           RemoveReflexiveTag, RemoveSepVerbPrefix, RemoveTruncMarker};
+                                           RemoveReflexiveTag, RemoveSepVerbPrefix,
+                                           RemoveTruncMarker};
+use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
 use petgraph::graph::NodeIndex;
 use stdinout::{Input, OrExit, Output};
@@ -61,6 +63,8 @@ fn main() {
         Box::new(RemoveReflexiveTag),
         Box::new(RemoveSepVerbPrefix),
         Box::new(RemoveTruncMarker),
+        Box::new(SimplifyArticleLemma),
+        Box::new(SimplifyPossesivePronounLemma),
     ];
 
     let input = Input::from(matches.free.get(0));
