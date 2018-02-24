@@ -1,3 +1,8 @@
+//! Miscellaneous transformations.
+//!
+//! This module provides transformations that can be used for both
+//! lemmatization and delemmatization.
+
 use petgraph::graph::NodeIndex;
 
 use automaton::PrefixAutomaton;
@@ -5,6 +10,14 @@ use constants::*;
 use fst::{IntoStreamer, Set, Streamer};
 use transform::{DependencyGraph, Token, Transform};
 
+/// Simplify article and relative pronoun lemmas.
+///
+/// This transformation simplifies lemmas of articles and relative pronouns
+/// to *d* for definite and *e* for indefinite. For example:
+///
+/// * *den* -> *d*
+/// * *einem* -> *e*
+/// * *dessen* -> *d*
 pub struct SimplifyArticleLemma;
 
 impl<T> Transform<T> for SimplifyArticleLemma
@@ -30,11 +43,18 @@ where
 }
 
 lazy_static! {
-    pub static ref ATTR_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "euer", "eure", "ihr", "mein", "sein", "unser"]).unwrap();
+    static ref ATTR_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "euer", "eure", "ihr", "mein", "sein", "unser"]).unwrap();
 
-    pub static ref SUBST_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "ihr", "mein", "sein", "unser", "unsrig"]).unwrap();
+    static ref SUBST_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "ihr", "mein", "sein", "unser", "unsrig"]).unwrap();
 }
 
+/// Simplify possesive pronoun lemmas.
+///
+/// This transformation simplifies pronoun lemmas to lemmas without
+/// gender-specific suffixes. For example:
+///
+/// * *deinen* -> *dein*
+/// * *deiner* -> *dein*
 pub struct SimplifyPossesivePronounLemma;
 
 impl<T> Transform<T> for SimplifyPossesivePronounLemma
