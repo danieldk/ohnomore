@@ -1,3 +1,8 @@
+//! Lemmatization transformations.
+//!
+//! This module provides transformations that converts lemmas to TüBa-D/Z-style
+//! lemmas.
+
 use std::collections::HashMap;
 
 use fst::Set;
@@ -11,6 +16,19 @@ use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use transform::{DependencyGraph, Token, Transform};
 use transform::svp::longest_prefixes;
 
+/// Add auxililary/passive markers.
+///
+/// This transformation adds auxiliary/passive markers to auxiliary/passive
+/// verbs. Verbs such as *sein* both have auxiliary and other readings. E.g.
+///
+/// * *Ich hab einen traum* (non-auxiliary)
+/// * *Ich hab geträumt* (auxiliary)
+///
+/// The TüBa-D/Z marks auxiliary and passive readings using the *%aux* and
+/// *%passiv* suffixes (e.g. *haben%aux* and *werden%passiv*).
+///
+/// This transformation adds such markers. It distinguishes auxiliary/passive
+/// readings from other readings using dependency structure.
 pub struct AddAuxPassivTag;
 
 impl<T> Transform<T> for AddAuxPassivTag
@@ -71,6 +89,22 @@ where
     }
 }
 
+/// Add separable verb prefixes to verbs.
+///
+/// TüBa-D/Z marks separable verb prefixes in the verb lemma. E.g. *ab#zeichnen*,
+/// where *ab* is the separable prefix. This transformation handles cases where
+/// the prefix is separated from the verb. For example, in the sentence
+///
+/// *Diese änderungen zeichnen sich bereits ab .*
+///
+/// The transformation rule will lemmatize *zeichnen* to *ab#zeichnen*. The
+/// separable particle of a verb is found using dependency structure. In some
+/// limited cases, it will also handle verbs with multiple `competing' separable
+/// prefixes. For example, *nimmt* in
+///
+/// *[...] nimmt eher zu als ab*
+///
+/// is lemmatized as *zu#nehmen|ab#nehmen*.
 pub struct AddSeparatedVerbPrefix {
     multiple_prefixes: bool,
 }
@@ -119,12 +153,35 @@ where
     }
 }
 
+/// Mark separable verb prefixes in verbs.
+///
+/// TüBa-D/Z marks separable verb prefixes in the verb lemma. E.g. *ab#zeichnen*,
+/// where *ab* is the separable prefix. This transformation handles cases where
+/// the prefix is **not** separated from the verb. For example, it makes the
+/// following transformations:
+///
+/// 1. *abhing/hängen* -> *abhängen*
+/// 2. *dazugefügt/fügen* -> *dazu#fügen*
+/// 3. *wiedergutgemacht/machen* -> *wieder#gut#machen*
+/// 4. *hinzubewegen/bewegen* -> *hin#bewegen*
+///
+/// The transformation rule prefers analysis with longer prefixes over shorter
+/// prefixes. This leads to the analysis (2) rather than *da#zu#fügen*.
+///
+/// When a verb contains multiple separable prefixes, this transformation rule
+/// attempts to find them, as in (3).
+///
+/// In 'zu'-infinitives *zu* is removed and not analyzed as being (part of) a
+/// separable prefix.
 pub struct MarkVerbPrefix {
     prefix_verbs: HashMap<String, String>,
     prefixes: Set,
 }
 
 impl MarkVerbPrefix {
+    /// Create this transformation. A simple lookup for prefix verbs can be
+    /// provided. More crucially, a set of prefixes must be provided to find
+    /// prefixes.
     pub fn new(prefix_verbs: HashMap<String, String>, prefixes: Set) -> Self {
         MarkVerbPrefix {
             prefix_verbs,

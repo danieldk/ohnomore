@@ -1,8 +1,17 @@
+//! Delemmatization transformations.
+//!
+//! This module provides transformations that converts TüBa-D/Z-style lemmas
+//! to `regular' lemmas.
+
 use petgraph::graph::NodeIndex;
 
 use constants::*;
 use transform::{DependencyGraph, Token, Transform};
 
+/// Remove alternative lemma analyses.
+///
+/// TüBa-D/Z sometimes provides multiple lemma analyses for a form. This
+/// transformation removes all but the first analysis.
 pub struct RemoveAlternatives;
 
 impl<T> Transform<T> for RemoveAlternatives
@@ -27,6 +36,10 @@ where
     }
 }
 
+/// Remove auxiliary markers.
+///
+/// The TüBa-D/Z marks auxiliary readings of applicable verbs using the *%aux*
+/// suffix (e.g. *haben%aux*). This transformation rule removes such suffixes.
 pub struct RemoveAuxTag;
 
 impl<T> Transform<T> for RemoveAuxTag
@@ -48,6 +61,11 @@ where
     }
 }
 
+/// Remove passive markers.
+///
+/// The TüBa-D/Z marks passive readings of applicable verbs using the *%passiv*
+/// suffixe (e.g. *werden%passiv*). This transformation rule removes such
+/// suffixes.
 pub struct RemovePassivTag;
 
 impl<T> Transform<T> for RemovePassivTag
@@ -69,6 +87,10 @@ where
     }
 }
 
+/// Replace reflexive tag.
+///
+/// Reflexives use the special *#refl* lemma in TüBa-D/Z. This transformation
+/// replaces this pseudo-lemma by the lowercased form.
 pub struct RemoveReflexiveTag;
 
 impl<T> Transform<T> for RemoveReflexiveTag
@@ -89,6 +111,12 @@ where
     }
 }
 
+/// Remove separable prefixes from verbs.
+///
+/// TüBa-D/Z marks separable verb prefixes in the verb lemma. E.g. *ab#zeichnen*,
+/// where *ab* is the separable prefix. This transformation handles removes
+/// separable prefixes from verbs. For example *ab#zeichnen* is transformed to
+/// *zeichnen*.
 pub struct RemoveSepVerbPrefix;
 
 impl<T> Transform<T> for RemoveSepVerbPrefix
@@ -109,6 +137,19 @@ where
     }
 }
 
+/// Remove truncation markers.
+///
+/// TüBa-D/Z uses special marking for truncations. For example, *Bau-* in
+///
+/// *Bau- und Verkehrsplanungen*
+///
+/// is lemmatized as *Bauplanung%n*, recovering the full lemma and adding
+/// a simplified part of speech tag of the word (since the form is tagged
+/// as *TRUNC*).
+///
+/// This transformation replaces the TüBa-D/Z lemma by the word form, such
+/// as *Bau-* in this example. If the simplified part of speech tag is not
+/// *n*, the lemma is also lowercased.
 pub struct RemoveTruncMarker;
 
 impl<T> Transform<T> for RemoveTruncMarker
