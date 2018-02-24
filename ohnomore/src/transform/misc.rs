@@ -3,6 +3,8 @@
 //! This module provides transformations that can be used for both
 //! lemmatization and delemmatization.
 
+use std::collections::{HashMap, HashSet};
+
 use petgraph::graph::NodeIndex;
 
 use automaton::PrefixAutomaton;
@@ -39,6 +41,74 @@ where
         }
 
         return lemma.to_owned();
+    }
+}
+
+lazy_static!{
+    static ref PRONOUN_SIMPLIFICATIONS: HashMap<&'static str, HashSet<&'static str>> = hashmap! {
+        "ich" => hashset!{"ich", "mich", "mir", "meiner"},
+        "du" => hashset!{"du", "dir", "dich", "deiner"},
+        "er" => hashset!{"er", "ihn", "ihm", "seiner"},
+        "sie" => hashset!{"sie", "ihr", "ihnen", "ihrer"},
+        "es" => hashset!{"es", "'s"},
+        "wir" => hashset!{"wir", "uns", "unser"},
+        "ihr" => hashset!{"euch"} // "ihr"
+    };
+
+    static ref PRONOUN_SIMPLIFICATIONS_LOOKUP: HashMap<String, String> =
+        inside_out(&PRONOUN_SIMPLIFICATIONS);
+}
+
+fn inside_out(map: &HashMap<&'static str, HashSet<&'static str>>) -> HashMap<String, String> {
+    let mut new_map = HashMap::new();
+
+    for (&k, values) in map.iter() {
+        for &value in values {
+            new_map.insert(value.to_owned(), k.to_owned());
+        }
+    }
+
+    new_map
+}
+
+/// Simplify personal pronouns.
+///
+/// This transformation simplifies personal pronouns using a simple lookup
+/// of the lowercased word form. Pronouns are simplified with the following
+/// rules (provided by Kathrin Beck):
+///
+/// Lowercased forms         | Lemma
+/// -------------------------|------
+/// *ich, mich, mir, meiner* | *ich*
+/// *du, dir, dich, deiner*  | *du*
+/// *er, ihn, ihm, seiner*   | *er*
+/// *sie, ihr, ihnen, ihrer* | *sie*
+/// *es, 's*                 | *es*
+/// *wir, uns, unser*        | *wir*
+/// *ihr, euch*              | *ihr*
+///
+/// In the case of the ambigious *ihr*, the lemma *sie* is always used.
+pub struct SimplifyPersonalPronounLemma;
+
+impl<T> Transform<T> for SimplifyPersonalPronounLemma
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let tag = token.tag();
+        let lemma = token.lemma();
+
+        if tag != PERSONAL_PRONOUN_TAG {
+            return lemma.to_owned();
+        }
+
+        let form = token.form().to_lowercase();
+        if let Some(simplified_lemma) = PRONOUN_SIMPLIFICATIONS_LOOKUP.get(&form) {
+            simplified_lemma.to_owned()
+        } else {
+            lemma.to_owned()
+        }
     }
 }
 
@@ -97,7 +167,7 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
+    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma};
 
     #[test]
     pub fn simplify_article_lemma() {
@@ -110,5 +180,10 @@ mod tests {
             "testdata/simplify-possesive-pronoun-lemma.test",
             SimplifyPossesivePronounLemma,
         );
+    }
+
+    #[test]
+    pub fn simplify_personal_pronoun_lemma() {
+        run_test_cases("testdata/simplify-personal-pronoun.test", SimplifyPersonalPronounLemma);
     }
 }
