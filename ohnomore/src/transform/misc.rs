@@ -184,6 +184,9 @@ mod tests {
 
     #[test]
     pub fn simplify_personal_pronoun_lemma() {
-        run_test_cases("testdata/simplify-personal-pronoun.test", SimplifyPersonalPronounLemma);
+        run_test_cases(
+            "testdata/simplify-personal-pronoun.test",
+            SimplifyPersonalPronounLemma,
+        );
     }
 }

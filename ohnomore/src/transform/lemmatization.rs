@@ -4,14 +4,15 @@
 //! lemmas.
 
 use std::collections::HashMap;
+use std::io::BufRead;
 
-use fst::Set;
+use fst::{Set, SetBuilder};
 use petgraph::Direction;
 use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
 
 use constants::*;
-
+use error::*;
 use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use transform::{DependencyGraph, Token, Transform};
 use transform::svp::longest_prefixes;
@@ -109,6 +110,12 @@ pub struct AddSeparatedVerbPrefix {
     multiple_prefixes: bool,
 }
 
+impl AddSeparatedVerbPrefix {
+    pub fn new(multiple_prefixes: bool) -> Self {
+        AddSeparatedVerbPrefix { multiple_prefixes }
+    }
+}
+
 impl<T> Transform<T> for AddSeparatedVerbPrefix
 where
     T: Token,
@@ -192,6 +199,10 @@ impl MarkVerbPrefix {
             prefixes,
         }
     }
+
+    pub fn set_prefix_verbs(&mut self, prefix_verbs: HashMap<String, String>) {
+        self.prefix_verbs = prefix_verbs;
+    }
 }
 
 impl<T> Transform<T> for MarkVerbPrefix
@@ -234,19 +245,42 @@ where
     }
 }
 
+pub trait ReadVerbPrefixes {
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix>
+    where
+        R: BufRead;
+}
+
+impl ReadVerbPrefixes for MarkVerbPrefix {
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix>
+    where
+        R: BufRead,
+    {
+        let mut builder = SetBuilder::memory();
+
+        for line in r.lines() {
+            let line = line?;
+
+            builder.insert(&line)?;
+        }
+
+        let bytes = builder.into_inner()?;
+        let prefixes = Set::from_bytes(bytes)?;
+
+        Ok(MarkVerbPrefix::new(HashMap::new(), prefixes))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
     use std::fs::File;
-    use std::io::{BufRead, BufReader};
+    use std::io::BufReader;
     use std::iter::FromIterator;
 
-    use fst::{Set, SetBuilder};
-
-    use error::*;
     use transform::test_helpers::run_test_cases;
 
-    use super::{AddAuxPassivTag, AddSeparatedVerbPrefix, MarkVerbPrefix};
+    use super::{AddAuxPassivTag, AddSeparatedVerbPrefix, MarkVerbPrefix, ReadVerbPrefixes};
 
     #[test]
     pub fn add_aux_passiv_tag() {
@@ -268,31 +302,11 @@ mod tests {
         let prefix_verbs = HashMap::from_iter(vec![
             (String::from("abbestellen"), String::from("ab#bestellen")),
         ]);
+
         let reader = BufReader::new(File::open("data/tdz10-separable-prefixes.txt").unwrap());
-        let prefixes = read_prefixes(reader).unwrap();
+        let mut transform = MarkVerbPrefix::read_verb_prefixes(reader).unwrap();
+        transform.set_prefix_verbs(prefix_verbs);
 
-        run_test_cases(
-            "testdata/mark-verb-prefix.test",
-            MarkVerbPrefix {
-                prefix_verbs,
-                prefixes,
-            },
-        );
-    }
-
-    fn read_prefixes<R>(r: R) -> Result<Set>
-    where
-        R: BufRead,
-    {
-        let mut builder = SetBuilder::memory();
-
-        for line in r.lines() {
-            let line = line?;
-
-            builder.insert(&line)?;
-        }
-
-        let bytes = builder.into_inner()?;
-        Ok(Set::from_bytes(bytes)?)
+        run_test_cases("testdata/mark-verb-prefix.test", transform);
     }
 }
