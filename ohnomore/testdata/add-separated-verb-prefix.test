@@ -2,16 +2,17 @@
 #   [rel dep_form dep_lemma dep_pos]*
 
 # Single separated prefix
-_ zeichnen VVFIN ab#zeichnen _ _ _ _ AVZ _ ab   PTKVZ
-_ stellen  VVFIN vor#stellen _ _ _ _ AVZ _ vor  PTKVZ
-_ müssen   VVFIN rein#müssen _ _ _ _ AVZ _ rein PTKVZ
-_ werden   VVFIN los#werden  _ _ _ _ AVZ _ los  PTKVZ
+_ zeichnen VVFIN ab#zeichnen _ _ _ _ AVZ ab   _ PTKVZ
+_ zeichnen VVFIN ab#zeichnen _ _ _ _ AVZ Ab   _ PTKVZ
+_ stellen  VVFIN vor#stellen _ _ _ _ AVZ vor  _ PTKVZ
+_ müssen   VVFIN rein#müssen _ _ _ _ AVZ rein _ PTKVZ
+_ werden   VVFIN los#werden  _ _ _ _ AVZ los  _ PTKVZ
 
 # Multiple separated prefixes
-_ nehmen VVFIN zu#nehmen|ab#nehmen _ _ _ _ AVZ _ ab PTKVZ KON _ zu PTKVZ
+_ nehmen VVFIN zu#nehmen|ab#nehmen _ _ _ _ AVZ ab _ PTKVZ KON zu _ PTKVZ
 
 # No splitting necessary
 kommt kommen VVFIN kommen
 
 # Not all tags can have separated prefixes.
-_ zeichnen VVINF zeichnen _ _ _ _ AVZ _ ab   PTKVZ
+_ zeichnen VVINF zeichnen _ _ _ _ AVZ ab _ PTKVZ

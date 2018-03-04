@@ -138,7 +138,7 @@ where
             // Fixme: prefixes are not returned in sentence order?
             for edge in prefix_iter {
                 let prefix = &graph[edge.target()];
-                lemmas.push(format!("{}#{}", prefix.lemma(), lemma));
+                lemmas.push(format!("{}#{}", prefix.form().to_lowercase(), lemma));
             }
 
             if lemmas.is_empty() {
@@ -149,7 +149,7 @@ where
         } else {
             if let Some(edge) = prefix_iter.next() {
                 let prefix = &graph[edge.target()];
-                lemma.insert_str(0, &format!("{}#", prefix.lemma()));
+                lemma.insert_str(0, &format!("{}#", prefix.form().to_lowercase()));
             }
 
             lemma
