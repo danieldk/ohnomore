@@ -141,7 +141,11 @@ where
                 lemmas.push(format!("{}#{}", prefix.lemma(), lemma));
             }
 
-            lemmas.join("|")
+            if lemmas.is_empty() {
+                lemma
+            } else {
+                lemmas.join("|")
+            }
         } else {
             if let Some(edge) = prefix_iter.next() {
                 let prefix = &graph[edge.target()];

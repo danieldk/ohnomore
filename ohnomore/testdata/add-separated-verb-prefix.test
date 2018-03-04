@@ -10,5 +10,8 @@ _ werden   VVFIN los#werden  _ _ _ _ AVZ _ los  PTKVZ
 # Multiple separated prefixes
 _ nehmen VVFIN zu#nehmen|ab#nehmen _ _ _ _ AVZ _ ab PTKVZ KON _ zu PTKVZ
 
+# No splitting necessary
+kommt kommen VVFIN kommen
+
 # Not all tags can have separated prefixes.
 _ zeichnen VVINF zeichnen _ _ _ _ AVZ _ ab   PTKVZ
