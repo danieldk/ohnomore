@@ -11,16 +11,13 @@ use std::io::{BufReader, BufWriter};
 
 use conllx::WriteSentence;
 use getopts::Options;
-use ohnomore::constants::{LEMMA_IS_FORM_TAGS, NO_LEMMA_TAGS};
-use ohnomore::transform::{Token, Transform};
+use ohnomore::constants::{LEMMA_IS_FORM_TAGS};
+use ohnomore::transform::{Token, Transforms};
 use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, MarkVerbPrefix,
                                          ReadVerbPrefixes};
 use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
-use petgraph::graph::NodeIndex;
 use stdinout::{Input, OrExit, Output};
-
-use ohnomore_utils::graph::DependencyGraph;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!(
@@ -28,16 +25,6 @@ fn print_usage(program: &str, opts: Options) {
         program
     );
     print!("{}", opts.usage(&brief));
-}
-
-fn apply_transformations<T>(g: &mut DependencyGraph, idx: NodeIndex, transformations: &[T])
-where
-    T: AsRef<Transform<conllx::Token>>,
-{
-    for t in transformations {
-        let lemma = t.as_ref().transform(g, idx);
-        g[idx].set_lemma(Some(lemma));
-    }
 }
 
 fn main() {
@@ -64,13 +51,13 @@ fn main() {
     let prefix_transform =
         MarkVerbPrefix::read_verb_prefixes(prefix_reader).or_exit("Cannot read verb prefixes", 1);
 
-    let transforms: &[Box<Transform<conllx::Token>>] = &[
+    let transforms = Transforms(vec![
         Box::new(AddSeparatedVerbPrefix::new(true)),
         Box::new(prefix_transform),
         Box::new(AddAuxPassivTag),
         Box::new(SimplifyArticleLemma),
         Box::new(SimplifyPossesivePronounLemma),
-    ];
+    ]);
 
     let input = Input::from(matches.free.get(1));
     let reader = conllx::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
@@ -94,16 +81,7 @@ fn main() {
             }
         }
 
-        for node in graph.node_indices() {
-            {
-                let pos = graph[node].tag();
-                if LEMMA_IS_FORM_TAGS.contains(pos) || NO_LEMMA_TAGS.contains(pos) {
-                    continue;
-                }
-            }
-
-            apply_transformations(&mut graph, node, transforms);
-        }
+        transforms.transform(&mut graph);
 
         let preproc_sentence: Vec<_> = graph.node_indices().map(|idx| graph[idx].clone()).collect();
         writer
