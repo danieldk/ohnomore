@@ -164,6 +164,25 @@ where
     }
 }
 
+/// Lemmatize tokens where the form is the lemma.
+pub struct FormAsLemma;
+
+impl<T> Transform<T> for FormAsLemma
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+
+        // Handle tags for which the lemma is the lowercased form.
+        if LEMMA_IS_FORM_TAGS.contains(token.tag()) {
+            token.form().to_lowercase()
+        } else {
+            token.lemma().to_owned()
+        }
+    }
+}
+
 /// Mark separable verb prefixes in verbs.
 ///
 /// TüBa-D/Z marks separable verb prefixes in the verb lemma. E.g. *ab#zeichnen*,
@@ -280,7 +299,8 @@ mod tests {
 
     use transform::test_helpers::run_test_cases;
 
-    use super::{AddAuxPassivTag, AddSeparatedVerbPrefix, MarkVerbPrefix, ReadVerbPrefixes};
+    use super::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
+                ReadVerbPrefixes};
 
     #[test]
     pub fn add_aux_passiv_tag() {
@@ -295,6 +315,11 @@ mod tests {
                 multiple_prefixes: true,
             },
         );
+    }
+
+    #[test]
+    pub fn form_as_lemma() {
+        run_test_cases("testdata/form-as-lemma.test", FormAsLemma);
     }
 
     #[test]

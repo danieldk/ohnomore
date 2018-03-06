@@ -1,0 +1,10 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# For applicable tags, the lemma is the lowercase form.
+und _ KON und
+Und _ KON und
+
+# For other tags, nothing changes.
+Auto Foobar NN Foobar
+NBA  Quux   NE Quux

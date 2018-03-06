@@ -15,6 +15,7 @@ pub static ARTICLE_TAG: &str = "ART";
 pub static ATTRIBUTIVE_POSSESIVE_PRONOUN_TAG: &str = "PPOSAT";
 pub static SUBST_POSSESIVE_PRONOUN_TAG: &str = "PPOSS";
 pub static FOREIGN_WORD_TAG: &str = "FM";
+pub static NAMED_ENTITY_TAG: &str = "NE";
 pub static NON_WORD_TAG: &str = "XY";
 pub static NOUN_TAG: &str = "NN";
 pub static PARTICIPLE_TAG: &str = "VVPP";

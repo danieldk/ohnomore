@@ -11,10 +11,9 @@ use std::io::{BufReader, BufWriter};
 
 use conllx::WriteSentence;
 use getopts::Options;
-use ohnomore::constants::{LEMMA_IS_FORM_TAGS};
-use ohnomore::transform::{Token, Transforms};
-use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, MarkVerbPrefix,
-                                         ReadVerbPrefixes};
+use ohnomore::transform::Transforms;
+use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
+                                         MarkVerbPrefix, ReadVerbPrefixes};
 use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
 use stdinout::{Input, OrExit, Output};
@@ -52,6 +51,7 @@ fn main() {
         MarkVerbPrefix::read_verb_prefixes(prefix_reader).or_exit("Cannot read verb prefixes", 1);
 
     let transforms = Transforms(vec![
+        Box::new(FormAsLemma),
         Box::new(AddSeparatedVerbPrefix::new(true)),
         Box::new(prefix_transform),
         Box::new(AddAuxPassivTag),
@@ -70,16 +70,6 @@ fn main() {
     for sentence in reader {
         let sentence = sentence.or_exit("Cannot read sentence", 1);
         let mut graph = sentence_to_graph(&sentence).or_exit("Error constructing graph", 1);
-
-        for node in graph.node_indices() {
-            {
-                let pos = graph[node].tag().to_owned();
-                let form = graph[node].form().to_owned();
-                if LEMMA_IS_FORM_TAGS.contains(pos.as_str()) {
-                    graph[node].set_lemma(Some(form.to_lowercase()));
-                }
-            }
-        }
 
         transforms.transform(&mut graph);
 
