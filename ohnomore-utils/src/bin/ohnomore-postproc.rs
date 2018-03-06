@@ -13,7 +13,7 @@ use conllx::WriteSentence;
 use getopts::Options;
 use ohnomore::transform::Transforms;
 use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
-                                         MarkVerbPrefix, ReadVerbPrefixes};
+                                         MarkVerbPrefix, ReadVerbPrefixes, RestoreCase};
 use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
 use stdinout::{Input, OrExit, Output};
@@ -52,6 +52,7 @@ fn main() {
 
     let transforms = Transforms(vec![
         Box::new(FormAsLemma),
+        Box::new(RestoreCase),
         Box::new(AddSeparatedVerbPrefix::new(true)),
         Box::new(prefix_transform),
         Box::new(AddAuxPassivTag),

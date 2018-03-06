@@ -19,6 +19,9 @@ pub mod error;
 #[macro_use]
 extern crate error_chain;
 
+#[macro_use]
+mod macros;
+
 pub mod transform;
 
 #[cfg(test)]

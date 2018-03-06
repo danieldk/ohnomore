@@ -1,0 +1,9 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# Nouns should have uppercased initial letters.
+_ bett NN Bett
+_ Bett NN Bett
+
+# For other tags, nothing changes.
+_ laufen VVFIN laufen

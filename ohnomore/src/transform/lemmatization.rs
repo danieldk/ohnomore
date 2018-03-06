@@ -290,6 +290,37 @@ impl ReadVerbPrefixes for MarkVerbPrefix {
     }
 }
 
+pub struct RestoreCase;
+
+impl<T> Transform<T> for RestoreCase
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+
+        if token.tag() == NOUN_TAG {
+            uppercase_first_char(token.lemma())
+        } else {
+            token.lemma().to_owned()
+        }
+    }
+}
+
+fn uppercase_first_char<S>(s: S) -> String
+where
+    S: AsRef<str>,
+{
+    // Hold your seats... This is a bit convoluted, because uppercasing a
+    // unicode codepoint can result in multiple codepoints. Although this
+    // should not hapen in German orthography, we want to be correct here...
+
+    let mut chars = s.as_ref().chars();
+    let first = ok_or!(chars.next(), return String::new());
+
+    first.to_uppercase().chain(chars).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -299,8 +330,15 @@ mod tests {
 
     use transform::test_helpers::run_test_cases;
 
-    use super::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
-                ReadVerbPrefixes};
+    use super::{uppercase_first_char, AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
+                MarkVerbPrefix, ReadVerbPrefixes, RestoreCase};
+
+    #[test]
+    pub fn first_char_is_uppercased() {
+        assert_eq!(uppercase_first_char("test"), "Test");
+        assert_eq!(uppercase_first_char("Test"), "Test");
+        assert_eq!(uppercase_first_char(""), "");
+    }
 
     #[test]
     pub fn add_aux_passiv_tag() {
@@ -333,5 +371,10 @@ mod tests {
         transform.set_prefix_verbs(prefix_verbs);
 
         run_test_cases("testdata/mark-verb-prefix.test", transform);
+    }
+
+    #[test]
+    pub fn restore_case() {
+        run_test_cases("testdata/restore-case.test", RestoreCase);
     }
 }
