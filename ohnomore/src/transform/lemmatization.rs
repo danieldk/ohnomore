@@ -15,6 +15,7 @@ use constants::*;
 use error::*;
 use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use transform::{DependencyGraph, Token, Transform};
+use transform::named_entity::restore_named_entity_case;
 use transform::svp::longest_prefixes;
 
 /// Add auxililary/passive markers.
@@ -301,6 +302,8 @@ where
 
         if token.tag() == NOUN_TAG {
             uppercase_first_char(token.lemma())
+        } else if token.tag() == NAMED_ENTITY_TAG {
+            restore_named_entity_case(token.form(), token.lemma())
         } else {
             token.lemma().to_owned()
         }

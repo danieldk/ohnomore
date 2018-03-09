@@ -73,6 +73,8 @@ pub mod lemmatization;
 
 pub mod misc;
 
+mod named_entity;
+
 mod svp;
 
 #[cfg(test)]
