@@ -5,5 +5,22 @@
 _ bett NN Bett
 _ Bett NN Bett
 
+# Named entities
+Apple       apple     NE Apple
+Apple's     apple     NE Apple
+Italiens    italien   NE Italien
+Liga-Chef   liga-chef NE Liga-Chef
+Liga-Chef's liga-chef NE Liga-Chef
+LigaChef's  liga-chef NE Liga-Chef
+D'Alema     d'alema   NE D'Alema
+CDU         cdu       NE CDU
+CDU's       cdu       NE CDU
+foobar      cdu       NE cdu
+
+# Check that strings are normalized. The form containes the composed
+# character u0065 u0308, rather than u00eb.
+Ëee ëee NE Ëee
+
 # For other tags, nothing changes.
-_ laufen VVFIN laufen
+_      laufen VVFIN laufen
+Laufen laufen VVFIN laufen

@@ -1,3 +1,5 @@
+extern crate caseless;
+
 extern crate conllx;
 
 extern crate fst;
@@ -9,6 +11,10 @@ extern crate lazy_static;
 extern crate maplit;
 
 extern crate petgraph;
+
+extern crate seqalign;
+
+extern crate unicode_normalization;
 
 pub mod automaton;
 
