@@ -44,6 +44,75 @@ where
     }
 }
 
+lazy_static! {
+
+    static ref PIDAT_LONG_PREFIXES: Set = Set::from_iter(vec!["allermeisten", "jedwed", "wenigst"]).unwrap();
+
+    static ref PIDAT_PREFIXES: Set = Set::from_iter(vec!["all", "ebensolch", "ebensoviel", "jed",
+    "jeglich", "meist", "solch", "soviel", "viel", "wenig", "zuviel"]).unwrap();
+}
+
+
+/// Simplify attributing indefinite pronouns with determiner (PIDAT)
+///
+/// Simplifies lemmas of this class to some baseform (preliminary) based on matching
+/// lowercased prefixes of the forms. The rules are applied in the given order
+///
+///  "allermeisten*" -> "allermeisten"
+///  "jedwed*" -> "jedwed"
+///  "wenigst*" -> "wenigst"
+///  "all*" -> "all"
+///  "jede*" -> "jed"
+///  "jeglich*" -> "jeglich"
+///  "solch*" -> "solch"
+///  "ebensolch*" -> "ebensolch"
+///  "meist*" -> "meist"
+///  "wenigst*" -> "wenigst"
+///  "wenig*" -> "wenig"
+///  "viele*" -> "viele"
+///  "zuviel*" -> "zuviele"
+///  "soviel*" -> "soviele"
+///  "ebensoviel*" -> "ebensoviele"
+///
+
+pub struct SimplifyPIDAT;
+impl<T> Transform<T> for SimplifyPIDAT
+where
+    T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let lemma = token.lemma();
+        let form = token.form();
+        let tag = token.tag();
+
+        if tag != ATTRIBUTING_INDEF_PRONOUN_WITH_DET {
+            return lemma.to_owned()
+        }
+
+        let form = form.to_lowercase();
+        let automaton = PrefixAutomaton::from(form.as_ref());
+
+        let mut stream = PIDAT_LONG_PREFIXES.search(&automaton).into_stream();
+
+        if let Some(prefix) = stream.next() {
+            let mut prefix = String::from_utf8(prefix.to_owned())
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+            return prefix.to_owned();
+        }
+
+        let mut stream = PIDAT_PREFIXES.search(&automaton).into_stream();
+
+        if let Some(prefix) = stream.next() {
+            let mut prefix = String::from_utf8(prefix.to_owned())
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+            return prefix.to_owned();
+        }
+
+        lemma.to_owned()
+    }
+}
+
 lazy_static!{
     static ref PRONOUN_SIMPLIFICATIONS: HashMap<&'static str, HashSet<&'static str>> = hashmap! {
         "ich" => hashset!{"ich", "mich", "mir", "meiner"},
@@ -167,7 +236,12 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma};
+    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIDAT};
+
+    #[test]
+    pub fn simplify_PIDAT_lemma() {
+        run_test_cases("testdata/simplify-pidat-lemma.test", SimplifyPIDAT);
+    }
 
     #[test]
     pub fn simplify_article_lemma() {
