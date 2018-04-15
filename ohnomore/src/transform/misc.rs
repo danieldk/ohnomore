@@ -43,42 +43,34 @@ where
         return lemma.to_owned();
     }
 }
-
 lazy_static! {
 
-    static ref PIDAT_LONG_PREFIXES: Set = Set::from_iter(vec!["allermeisten", "jedwed", "wenigst"]).unwrap();
-
-    static ref PIDAT_PREFIXES: Set = Set::from_iter(vec!["all", "ebensolch", "ebensoviel", "jed",
-    "jeglich", "meist", "solch", "soviel", "viel", "wenig", "zuviel"]).unwrap();
+    static ref PIAT_PREFIXES: Set = Set::from_iter(vec!["einig", "etlich", "irgendein", "irgendwelch",
+    "jedwed", "kein", "manch", "wenig"]).unwrap();
 }
 
 
-/// Simplify attributing indefinite pronouns with determiner (PIDAT)
+/// Simplify attributing indefinite pronouns without determiner (PIAT)
 ///
 /// Simplifies lemmas of this class to some baseform (preliminary) based on matching
 /// lowercased prefixes of the forms. The rules are applied in the given order
 ///
-///  "allermeisten*" -> "allermeisten"
+///  "keinerlei" -> "keinerlei"
+///  "einig*" -> "einig"
+///  "etlich*" -> "etlich"
+///  "irgendein*" -> "irgendein"
+///  "irgendwelch*" -> "irgendwelch"
 ///  "jedwed*" -> "jedwed"
-///  "wenigst*" -> "wenigst"
-///  "all*" -> "all"
-///  "jede*" -> "jed"
-///  "jeglich*" -> "jeglich"
-///  "solch*" -> "solch"
-///  "ebensolch*" -> "ebensolch"
-///  "meist*" -> "meist"
-///  "wenigst*" -> "wenigst"
+///  "kein*" -> "kein"
+///  "manch*" -> "manch"
 ///  "wenig*" -> "wenig"
-///  "viele*" -> "viele"
-///  "zuviel*" -> "zuviele"
-///  "soviel*" -> "soviele"
-///  "ebensoviel*" -> "ebensoviele"
+///
 ///
 
-pub struct SimplifyPIDAT;
-impl<T> Transform<T> for SimplifyPIDAT
-where
-    T: Token,
+pub struct SimplifyPIAT;
+impl<T> Transform<T> for SimplifyPIAT
+    where
+        T: Token,
 {
     fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
         let token = &graph[node];
@@ -86,22 +78,19 @@ where
         let form = token.form();
         let tag = token.tag();
 
-        if tag != ATTRIBUTING_INDEF_PRONOUN_WITH_DET {
+        if tag != ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET {
             return lemma.to_owned()
         }
 
         let form = form.to_lowercase();
-        let automaton = PrefixAutomaton::from(form.as_ref());
 
-        let mut stream = PIDAT_LONG_PREFIXES.search(&automaton).into_stream();
-
-        if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
-            return prefix.to_owned();
+        if form == "keinerlei" {
+            return lemma.to_owned()
         }
 
-        let mut stream = PIDAT_PREFIXES.search(&automaton).into_stream();
+        let automaton = PrefixAutomaton::from(form.as_ref());
+
+        let mut stream = PIAT_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
             let mut prefix = String::from_utf8(prefix.to_owned())
@@ -236,16 +225,16 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIDAT};
-
-    #[test]
-    pub fn simplify_PIDAT_lemma() {
-        run_test_cases("testdata/simplify-pidat-lemma.test", SimplifyPIDAT);
-    }
+    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIAT};
 
     #[test]
     pub fn simplify_article_lemma() {
         run_test_cases("testdata/simplify-article-lemma.test", SimplifyArticleLemma);
+    }
+
+    #[test]
+    pub fn simplify_PIAT() {
+        run_test_cases("testdata/simplify-piat-lemma.test", SimplifyPIAT);
     }
 
     #[test]
