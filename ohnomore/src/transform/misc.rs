@@ -294,7 +294,8 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIAT, SimplifyPIDAT};
+    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma,
+                SimplifyPIAT, SimplifyPIDAT, SimplifyPIS};
 
     #[test]
     pub fn simplify_PIDAT_lemma() {
@@ -309,6 +310,11 @@ mod tests {
     #[test]
     pub fn simplify_PIAT() {
         run_test_cases("testdata/simplify-piat-lemma.test", SimplifyPIAT);
+    }
+
+    #[test]
+    pub fn simplify_PIS() {
+        run_test_cases("testdata/simplify-pis-lemma.test", SimplifyPIS);
     }
 
     #[test]
