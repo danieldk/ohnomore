@@ -14,7 +14,8 @@ use getopts::Options;
 use ohnomore::transform::Transforms;
 use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
                                          MarkVerbPrefix, ReadVerbPrefixes, RestoreCase};
-use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
+use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,
+                                SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
 use stdinout::{Input, OrExit, Output};
 
@@ -58,6 +59,9 @@ fn main() {
         Box::new(AddAuxPassivTag),
         Box::new(SimplifyArticleLemma),
         Box::new(SimplifyPossesivePronounLemma),
+        Box::new(SimplifyPIS),
+        Box::new(SimplifyPIDAT),
+        Box::new(SimplifyPIAT),
     ]);
 
     let input = Input::from(matches.free.get(1));
