@@ -27,6 +27,10 @@ pub static TRUNCATED_TAG: &str = "TRUNC";
 pub static ZU_INFINITIVE_VERB: &str = "VVIZU";
 pub static INFINITIVE_VERB_TAG: &str = "VVINF";
 
+pub static SUBSTITUTING_INDEF_PRONOUN: &str = "PIS";
+pub static ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET: &str = "PIAT";
+pub static ATTRIBUTING_INDEF_PRONOUN_WITH_DET: &str = "PIDAT";
+
 pub static ADVERBIAL_RELATION: &str = "ADV";
 pub static AUXILIARY_RELATION: &str = "AUX";
 pub static CONJ_COMPLEMENT_RELATION: &str = "CJ";

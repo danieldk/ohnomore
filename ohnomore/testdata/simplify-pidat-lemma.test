@@ -1,0 +1,101 @@
+# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
+#   [rel dep_form dep_lemma dep_pos]*
+
+# all* is lemmatized to 'all'
+alle _ PIDAT all
+aller _ PIDAT all
+all _ PIDAT all
+alle aller PIDAT all
+
+# ebensolch* is lemmatized to 'ebensolch'
+ebensolcher _ PIDAT ebensolch
+ebensolches _ PIDAT ebensolch
+ebensolchen _ PIDAT ebensolch
+ebensolch _ PIDAT ebensolch
+
+# ebensoviel* is lemmatized to 'ebensoviel'
+ebensoviele _ PIDAT ebensoviel
+ebensovielen _ PIDAT ebensoviel
+ebensoviel _ PIDAT ebensoviel
+
+# don't touch words with different tag
+alle foo PIRAT foo
+
+# don't touch words that are lemmatized to the same anyways
+sämtlich sämtlich PIDAT sämtlich
+
+
+# all unique forms for PIDAT
+solche	solche	PIDAT   solch
+viele	viele	PIDAT   viel
+paar	paar	PIDAT   paar
+jeden	jeder	PIDAT   jed
+bißchen	bißchen	PIDAT   bißchen
+vielen	viele	PIDAT   viel
+alle	alle	PIDAT   all
+solch	solch	PIDAT   solch
+all	all	PIDAT   all
+aller	alles	PIDAT   all
+wenigen	wenige	PIDAT   wenig
+jede	jede	PIDAT   jed
+beiden	beide	PIDAT   beide
+jedes	jedes	PIDAT   jed
+jeder	jeder	PIDAT   jed
+beide	beide	PIDAT   beide
+jegliche	jegliche	PIDAT   jeglich
+solcher	solcher	PIDAT   solch
+allen	alle	PIDAT   all
+beider	beide	PIDAT   beide
+vieler	viele	PIDAT   viel
+solchen	solcher	PIDAT   solch
+jedem	jedes	PIDAT   jed
+wenige	wenige	PIDAT   wenig
+alles	alles	PIDAT   all
+meisten	meisten	PIDAT   meist
+solches	solches	PIDAT   solch
+ebensoviele	ebensovieles	PIDAT   ebensoviel
+wenig	wenig	PIDAT   wenig
+sämtliche	sämtlich	PIDAT   sämtlich
+weniger	wenige	PIDAT   wenig
+allem	alles	PIDAT   all
+jede/r	jeder	PIDAT   jed
+jeglichem	jeglicher	PIDAT   jeglich
+jedwede	jedwede	PIDAT   jedwed
+manch	manch	PIDAT   manch
+soviele	sovieles	PIDAT   soviel
+jeglicher	jegliche	PIDAT   jeglich
+-zig	zig	PIDAT   zig
+sämtlicher	sämtlich	PIDAT   sämtlich
+jedweder	jedwede	PIDAT   jedwed
+sämtliches	sämtlich	PIDAT   sämtlich
+wenigsten	wenigste	PIDAT   wenigst
+zuviele	zuvieler	PIDAT   zuviel
+jegliches	jegliches	PIDAT   jeglich
+jeglichen	jeglicher	PIDAT   jeglich
+solchem	solches	PIDAT   solch
+meiste	meistes	PIDAT   meist
+viel	vieles	PIDAT   viel
+zig	zig	PIDAT   zig
+sämtlichen	sämtlich	PIDAT   sämtlich
+allermeisten	allermeisten	PIDAT   allermeisten
+bei-den	beide	PIDAT   beide
+soviel	sovieler	PIDAT   soviel
+wenigste	wenigste	PIDAT   wenigst
+ebensolches	ebensolche	PIDAT   ebensolch
+solchenen	solche_	PIDAT   solch
+#arrel	alles	PIDAT   all
+ebensolchem	ebensolcher	PIDAT   ebensolch
+jedwedem	jedweder	PIDAT   jedwed
+vielem	vieles	PIDAT   viel
+ebensolche	ebensolche	PIDAT   ebensolch
+ebensolchen	ebensolche	PIDAT   ebensolch
+jedem/r	jeder	PIDAT   jed
+solch`	solch	PIDAT   solch
+zuviel	zuviele	PIDAT   zuviel
+ebensovielen	ebensoviele	PIDAT   ebensoviel
+paare	paar	PIDAT   paar
+ebensolcher	ebensolch	PIDAT   ebensolch
+jeglich'm	jeglicher_	PIDAT   jeglich
+gleichviel	gleichvieler	PIDAT   gleichvieler
+jeglich	jegliche	PIDAT   jeglich
+bischen	bißchen	PIDAT   bißchen
