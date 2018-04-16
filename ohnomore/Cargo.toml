@@ -6,7 +6,7 @@ authors = ["Daniël de Kok <me@danieldk.eu>"]
 [dependencies]
 caseless = "0.2"
 conllx = { git = "https://github.com/danieldk/conllx-rs" }
-error-chain = "0.11"
+failure = "0.1"
 fst = "0.3"
 lazy_static = "1.0"
 maplit = "1.0"

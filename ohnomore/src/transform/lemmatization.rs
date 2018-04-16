@@ -6,13 +6,13 @@
 use std::collections::HashMap;
 use std::io::BufRead;
 
+use failure::Error;
 use fst::{Set, SetBuilder};
 use petgraph::Direction;
 use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
 
 use constants::*;
-use error::*;
 use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use transform::{DependencyGraph, Token, Transform};
 use transform::named_entity::restore_named_entity_case;
@@ -266,13 +266,13 @@ where
 }
 
 pub trait ReadVerbPrefixes {
-    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix>
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, Error>
     where
         R: BufRead;
 }
 
 impl ReadVerbPrefixes for MarkVerbPrefix {
-    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix>
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, Error>
     where
         R: BufRead,
     {

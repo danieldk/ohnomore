@@ -2,6 +2,8 @@ extern crate caseless;
 
 extern crate conllx;
 
+extern crate failure;
+
 extern crate fst;
 
 #[macro_use]
@@ -19,11 +21,6 @@ extern crate unicode_normalization;
 pub mod automaton;
 
 pub mod constants;
-
-pub mod error;
-
-#[macro_use]
-extern crate error_chain;
 
 #[macro_use]
 mod macros;

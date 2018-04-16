@@ -1,8 +1,7 @@
 use conllx::Token;
+use failure::Error;
 use petgraph::Directed;
 use petgraph::graph::Graph;
-
-use error::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DependencyNode {
@@ -12,7 +11,7 @@ pub struct DependencyNode {
 
 pub type DependencyGraph = Graph<Token, String, Directed>;
 
-pub fn sentence_to_graph(sentence: &[Token]) -> Result<DependencyGraph> {
+pub fn sentence_to_graph(sentence: &[Token]) -> Result<DependencyGraph, Error> {
     let mut g = Graph::new();
 
     let mut nodes = Vec::new();
