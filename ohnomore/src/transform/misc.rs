@@ -49,7 +49,6 @@ lazy_static! {
     "jedwed", "kein", "manch", "wenig"]).unwrap();
 }
 
-
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
 ///
 /// Simplifies lemmas of this class to some baseform (preliminary) based on matching
@@ -69,8 +68,8 @@ lazy_static! {
 
 pub struct SimplifyPIAT;
 impl<T> Transform<T> for SimplifyPIAT
-    where
-        T: Token,
+where
+    T: Token,
 {
     fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
         let token = &graph[node];
@@ -79,13 +78,13 @@ impl<T> Transform<T> for SimplifyPIAT
         let tag = token.tag();
 
         if tag != ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET {
-            return lemma.to_owned()
+            return lemma.to_owned();
         }
 
         let form = form.to_lowercase();
 
         if form == "keinerlei" {
-            return lemma.to_owned()
+            return lemma.to_owned();
         }
 
         let automaton = PrefixAutomaton::from(form.as_ref());
@@ -109,7 +108,6 @@ lazy_static! {
     static ref PIDAT_PREFIXES: Set = Set::from_iter(vec!["all", "ebensolch", "ebensoviel", "jed",
     "jeglich", "meist", "solch", "soviel", "viel", "wenig", "zuviel"]).unwrap();
 }
-
 
 /// Simplify attributing indefinite pronouns with determiner (PIDAT)
 ///
@@ -145,7 +143,7 @@ where
         let tag = token.tag();
 
         if tag != ATTRIBUTING_INDEF_PRONOUN_WITH_DET {
-            return lemma.to_owned()
+            return lemma.to_owned();
         }
 
         let form = form.to_lowercase();
@@ -180,7 +178,6 @@ lazy_static! {
     "viel", "wenig", "zuviel"]).unwrap();
 }
 
-
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
 ///
 /// Simplifies lemmas of this class to some baseform (preliminary) based on matching
@@ -190,8 +187,8 @@ lazy_static! {
 
 pub struct SimplifyPIS;
 impl<T> Transform<T> for SimplifyPIS
-    where
-        T: Token,
+where
+    T: Token,
 {
     fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
         let token = &graph[node];
@@ -200,7 +197,7 @@ impl<T> Transform<T> for SimplifyPIS
         let tag = token.tag();
 
         if tag != SUBSTITUTING_INDEF_PRONOUN {
-            return lemma.to_owned()
+            return lemma.to_owned();
         }
 
         let form = form.to_lowercase();
@@ -353,8 +350,8 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma,
-                SimplifyPIAT, SimplifyPIDAT, SimplifyPIS};
+    use super::{SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,
+                SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma};
 
     #[test]
     pub fn simplify_pidat_lemma() {
