@@ -172,7 +172,7 @@ where
 }
 
 lazy_static! {
-    static ref PIS_E_PREFIXES: Set = Set::from_iter(vec!["alledem", "allerhand", "allerlei",
+    static ref PIS_LONG_PREFIXES: Set = Set::from_iter(vec!["alledem", "allerhand", "allerlei",
     "allermeisten", "einig", "einzeln","einzig", "jederman", "wenigst"]).unwrap();
 
     static ref PIS_PREFIXES: Set = Set::from_iter(vec!["alle", "ander", "beid", "ein", "erster",
@@ -211,7 +211,7 @@ impl<T> Transform<T> for SimplifyPIS
 
         let automaton = PrefixAutomaton::from(form.as_ref());
 
-        let mut stream = PIS_E_PREFIXES.search(&automaton).into_stream();
+        let mut stream = PIS_LONG_PREFIXES.search(&automaton).into_stream();
         if let Some(prefix) = stream.next() {
             let mut prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
@@ -357,7 +357,7 @@ mod tests {
                 SimplifyPIAT, SimplifyPIDAT, SimplifyPIS};
 
     #[test]
-    pub fn simplify_PIDAT_lemma() {
+    pub fn simplify_pidat_lemma() {
         run_test_cases("testdata/simplify-pidat-lemma.test", SimplifyPIDAT);
     }
 
@@ -367,12 +367,12 @@ mod tests {
     }
 
     #[test]
-    pub fn simplify_PIAT() {
+    pub fn simplify_piat_lemma() {
         run_test_cases("testdata/simplify-piat-lemma.test", SimplifyPIAT);
     }
 
     #[test]
-    pub fn simplify_PIS() {
+    pub fn simplify_pis_lemma() {
         run_test_cases("testdata/simplify-pis-lemma.test", SimplifyPIS);
     }
 
