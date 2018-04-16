@@ -44,9 +44,12 @@ where
     }
 }
 lazy_static! {
+    static ref PIS_E_PREFIXES: Set = Set::from_iter(vec!["alledem", "allerhand", "allerlei",
+    "allermeisten", "einig", "einzeln","einzig", "jederman", "wenigst"]).unwrap();
 
-    static ref PIAT_PREFIXES: Set = Set::from_iter(vec!["einig", "etlich", "irgendein", "irgendwelch",
-    "jedwed", "kein", "manch", "wenig"]).unwrap();
+    static ref PIS_PREFIXES: Set = Set::from_iter(vec!["alle", "ander", "beid", "ein", "erster",
+    "etlich", "etwas", "irgendein", "jed", "kein", "letzter", "manch", "meist", "solch", "soviel",
+    "viel", "wenig", "zuviel"]).unwrap();
 }
 
 
@@ -55,20 +58,10 @@ lazy_static! {
 /// Simplifies lemmas of this class to some baseform (preliminary) based on matching
 /// lowercased prefixes of the forms. The rules are applied in the given order
 ///
-///  "keinerlei" -> "keinerlei"
-///  "einig*" -> "einig"
-///  "etlich*" -> "etlich"
-///  "irgendein*" -> "irgendein"
-///  "irgendwelch*" -> "irgendwelch"
-///  "jedwed*" -> "jedwed"
-///  "kein*" -> "kein"
-///  "manch*" -> "manch"
-///  "wenig*" -> "wenig"
-///
 ///
 
-pub struct SimplifyPIAT;
-impl<T> Transform<T> for SimplifyPIAT
+pub struct SimplifyPIS;
+impl<T> Transform<T> for SimplifyPIS
     where
         T: Token,
 {
@@ -78,19 +71,26 @@ impl<T> Transform<T> for SimplifyPIAT
         let form = token.form();
         let tag = token.tag();
 
-        if tag != ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET {
+        if tag != SUBSTITUTING_INDEF_PRONOUN {
             return lemma.to_owned()
         }
 
         let form = form.to_lowercase();
 
-        if form == "keinerlei" {
-            return lemma.to_owned()
+        if form.starts_with("andr") {
+            return "ander".to_owned();
         }
 
         let automaton = PrefixAutomaton::from(form.as_ref());
 
-        let mut stream = PIAT_PREFIXES.search(&automaton).into_stream();
+        let mut stream = PIS_E_PREFIXES.search(&automaton).into_stream();
+        if let Some(prefix) = stream.next() {
+            let mut prefix = String::from_utf8(prefix.to_owned())
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+            return prefix.to_owned();
+        }
+
+        let mut stream = PIS_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
             let mut prefix = String::from_utf8(prefix.to_owned())
@@ -225,7 +225,7 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIAT};
+    use super::{SimplifyArticleLemma, SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma, SimplifyPIS};
 
     #[test]
     pub fn simplify_article_lemma() {
@@ -233,8 +233,8 @@ mod tests {
     }
 
     #[test]
-    pub fn simplify_PIAT() {
-        run_test_cases("testdata/simplify-piat-lemma.test", SimplifyPIAT);
+    pub fn simplify_PIS() {
+        run_test_cases("testdata/simplify-pis-lemma.test", SimplifyPIS);
     }
 
     #[test]
