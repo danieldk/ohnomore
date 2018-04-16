@@ -171,6 +171,65 @@ where
     }
 }
 
+lazy_static! {
+    static ref PIS_E_PREFIXES: Set = Set::from_iter(vec!["alledem", "allerhand", "allerlei",
+    "allermeisten", "einig", "einzeln","einzig", "jederman", "wenigst"]).unwrap();
+
+    static ref PIS_PREFIXES: Set = Set::from_iter(vec!["alle", "ander", "beid", "ein", "erster",
+    "etlich", "etwas", "irgendein", "jed", "kein", "letzter", "manch", "meist", "solch", "soviel",
+    "viel", "wenig", "zuviel"]).unwrap();
+}
+
+
+/// Simplify attributing indefinite pronouns without determiner (PIAT)
+///
+/// Simplifies lemmas of this class to some baseform (preliminary) based on matching
+/// lowercased prefixes of the forms. The rules are applied in the given order
+///
+///
+
+pub struct SimplifyPIS;
+impl<T> Transform<T> for SimplifyPIS
+    where
+        T: Token,
+{
+    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
+        let token = &graph[node];
+        let lemma = token.lemma();
+        let form = token.form();
+        let tag = token.tag();
+
+        if tag != SUBSTITUTING_INDEF_PRONOUN {
+            return lemma.to_owned()
+        }
+
+        let form = form.to_lowercase();
+
+        if form.starts_with("andr") {
+            return "ander".to_owned();
+        }
+
+        let automaton = PrefixAutomaton::from(form.as_ref());
+
+        let mut stream = PIS_E_PREFIXES.search(&automaton).into_stream();
+        if let Some(prefix) = stream.next() {
+            let mut prefix = String::from_utf8(prefix.to_owned())
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+            return prefix.to_owned();
+        }
+
+        let mut stream = PIS_PREFIXES.search(&automaton).into_stream();
+
+        if let Some(prefix) = stream.next() {
+            let mut prefix = String::from_utf8(prefix.to_owned())
+                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+            return prefix.to_owned();
+        }
+
+        lemma.to_owned()
+    }
+}
+
 lazy_static!{
     static ref PRONOUN_SIMPLIFICATIONS: HashMap<&'static str, HashSet<&'static str>> = hashmap! {
         "ich" => hashset!{"ich", "mich", "mir", "meiner"},
