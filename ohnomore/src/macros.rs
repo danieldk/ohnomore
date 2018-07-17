@@ -1,6 +1,8 @@
 macro_rules! ok_or {
-    ($expr:expr, $stmt:stmt) => (match $expr {
-        Some(val) => val,
-        None => {$stmt}
-    })
+    ($expr:expr, $none_expr:expr) => {
+        match $expr {
+            Some(val) => val,
+            None => $none_expr,
+        }
+    };
 }
