@@ -1,7 +1,7 @@
 use conllx::Token;
-use failure::Error;
-use petgraph::Directed;
+use failure::{err_msg, Error};
 use petgraph::graph::Graph;
+use petgraph::Directed;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DependencyNode {
@@ -20,8 +20,10 @@ pub fn sentence_to_graph(sentence: &[Token]) -> Result<DependencyGraph, Error> {
     }
 
     for (idx, token) in sentence.iter().enumerate() {
-        assert!(token.head_rel().is_some(), "missing dependency relation");
-        let rel = token.head_rel().unwrap().to_owned();
+        let rel = match token.head_rel() {
+            Some(rel) => rel.to_owned(),
+            None => return Err(err_msg(format!("Token without head relation: {}", token))),
+        };
 
         if let Some(head) = token.head() {
             if head != 0 {
