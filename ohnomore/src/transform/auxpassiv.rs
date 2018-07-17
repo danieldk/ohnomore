@@ -1,6 +1,6 @@
-use petgraph::Direction;
 use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
+use petgraph::Direction;
 
 use constants::*;
 

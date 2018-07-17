@@ -11,11 +11,14 @@ use std::io::{BufReader, BufWriter};
 
 use conllx::WriteSentence;
 use getopts::Options;
+use ohnomore::transform::lemmatization::{
+    AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes,
+    RestoreCase,
+};
+use ohnomore::transform::misc::{
+    SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS, SimplifyPossesivePronounLemma,
+};
 use ohnomore::transform::Transforms;
-use ohnomore::transform::lemmatization::{AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
-                                         MarkVerbPrefix, ReadVerbPrefixes, RestoreCase};
-use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,
-                                SimplifyPossesivePronounLemma};
 use ohnomore_utils::graph::sentence_to_graph;
 use stdinout::{Input, OrExit, Output};
 

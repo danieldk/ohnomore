@@ -8,15 +8,15 @@ use std::io::BufRead;
 
 use failure::Error;
 use fst::{Set, SetBuilder};
-use petgraph::Direction;
 use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
+use petgraph::Direction;
 
 use constants::*;
 use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
-use transform::{DependencyGraph, Token, Transform};
 use transform::named_entity::restore_named_entity_case;
 use transform::svp::longest_prefixes;
+use transform::{DependencyGraph, Token, Transform};
 
 /// Add auxililary/passive markers.
 ///
@@ -333,8 +333,10 @@ mod tests {
 
     use transform::test_helpers::run_test_cases;
 
-    use super::{uppercase_first_char, AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma,
-                MarkVerbPrefix, ReadVerbPrefixes, RestoreCase};
+    use super::{
+        uppercase_first_char, AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
+        ReadVerbPrefixes, RestoreCase,
+    };
 
     #[test]
     pub fn first_char_is_uppercased() {
@@ -365,9 +367,10 @@ mod tests {
 
     #[test]
     pub fn mark_verb_prefix() {
-        let prefix_verbs = HashMap::from_iter(vec![
-            (String::from("abbestellen"), String::from("ab#bestellen")),
-        ]);
+        let prefix_verbs = HashMap::from_iter(vec![(
+            String::from("abbestellen"),
+            String::from("ab#bestellen"),
+        )]);
 
         let reader = BufReader::new(File::open("data/tdz10-separable-prefixes.txt").unwrap());
         let mut transform = MarkVerbPrefix::read_verb_prefixes(reader).unwrap();

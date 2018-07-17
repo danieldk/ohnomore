@@ -2,8 +2,8 @@ use std::iter;
 use std::iter::FromIterator;
 
 use caseless::Caseless;
-use seqalign::{Align, Measure, SeqPair};
 use seqalign::op::{archetype, Operation};
+use seqalign::{Align, Measure, SeqPair};
 use unicode_normalization::UnicodeNormalization;
 
 /// Levenshtein distance with case a case-insensitive match operation.

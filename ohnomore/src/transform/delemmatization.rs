@@ -22,7 +22,8 @@ where
         let token = &graph[node];
         let mut lemma = token.lemma();
 
-        if token.tag().starts_with(PUNCTUATION_PREFIX) || token.tag() == NON_WORD_TAG
+        if token.tag().starts_with(PUNCTUATION_PREFIX)
+            || token.tag() == NON_WORD_TAG
             || token.tag() == FOREIGN_WORD_TAG
         {
             return lemma.to_owned();

@@ -135,7 +135,8 @@ where
             let last_prefix = candidate.prefixes.last().unwrap().to_owned();
 
             // Avoid e.g. 'dazu' as a valid prefix for a zu-infinitive.
-            if self.tag == ZU_INFINITIVE_VERB && last_prefix.ends_with("zu")
+            if self.tag == ZU_INFINITIVE_VERB
+                && last_prefix.ends_with("zu")
                 && !candidate.stripped_form.starts_with("zu")
             {
                 continue;

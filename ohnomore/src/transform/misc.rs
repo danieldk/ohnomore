@@ -44,9 +44,16 @@ where
     }
 }
 lazy_static! {
-
-    static ref PIAT_PREFIXES: Set = Set::from_iter(vec!["einig", "etlich", "irgendein", "irgendwelch",
-    "jedwed", "kein", "manch", "wenig"]).unwrap();
+    static ref PIAT_PREFIXES: Set = Set::from_iter(vec![
+        "einig",
+        "etlich",
+        "irgendein",
+        "irgendwelch",
+        "jedwed",
+        "kein",
+        "manch",
+        "wenig",
+    ]).unwrap();
 }
 
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
@@ -102,11 +109,21 @@ where
 }
 
 lazy_static! {
-
-    static ref PIDAT_LONG_PREFIXES: Set = Set::from_iter(vec!["allermeisten", "jedwed", "wenigst"]).unwrap();
-
-    static ref PIDAT_PREFIXES: Set = Set::from_iter(vec!["all", "ebensolch", "ebensoviel", "jed",
-    "jeglich", "meist", "solch", "soviel", "viel", "wenig", "zuviel"]).unwrap();
+    static ref PIDAT_LONG_PREFIXES: Set =
+        Set::from_iter(vec!["allermeisten", "jedwed", "wenigst"]).unwrap();
+    static ref PIDAT_PREFIXES: Set = Set::from_iter(vec![
+        "all",
+        "ebensolch",
+        "ebensoviel",
+        "jed",
+        "jeglich",
+        "meist",
+        "solch",
+        "soviel",
+        "viel",
+        "wenig",
+        "zuviel",
+    ]).unwrap();
 }
 
 /// Simplify attributing indefinite pronouns with determiner (PIDAT)
@@ -170,12 +187,37 @@ where
 }
 
 lazy_static! {
-    static ref PIS_LONG_PREFIXES: Set = Set::from_iter(vec!["alledem", "allerhand", "allerlei",
-    "allermeisten", "einig", "einzeln","einzig", "jederman", "wenigst"]).unwrap();
-
-    static ref PIS_PREFIXES: Set = Set::from_iter(vec!["alle", "ander", "beid", "ein", "erster",
-    "etlich", "etwas", "irgendein", "jed", "kein", "letzter", "manch", "meist", "solch", "soviel",
-    "viel", "wenig", "zuviel"]).unwrap();
+    static ref PIS_LONG_PREFIXES: Set = Set::from_iter(vec![
+        "alledem",
+        "allerhand",
+        "allerlei",
+        "allermeisten",
+        "einig",
+        "einzeln",
+        "einzig",
+        "jederman",
+        "wenigst",
+    ]).unwrap();
+    static ref PIS_PREFIXES: Set = Set::from_iter(vec![
+        "alle",
+        "ander",
+        "beid",
+        "ein",
+        "erster",
+        "etlich",
+        "etwas",
+        "irgendein",
+        "jed",
+        "kein",
+        "letzter",
+        "manch",
+        "meist",
+        "solch",
+        "soviel",
+        "viel",
+        "wenig",
+        "zuviel",
+    ]).unwrap();
 }
 
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
@@ -296,9 +338,10 @@ where
 }
 
 lazy_static! {
-    static ref ATTR_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "euer", "eure", "ihr", "mein", "sein", "unser"]).unwrap();
-
-    static ref SUBST_POSS_PRONOUN_PREFIXES: Set = Set::from_iter(vec!["dein", "ihr", "mein", "sein", "unser", "unsrig"]).unwrap();
+    static ref ATTR_POSS_PRONOUN_PREFIXES: Set =
+        Set::from_iter(vec!["dein", "euer", "eure", "ihr", "mein", "sein", "unser"]).unwrap();
+    static ref SUBST_POSS_PRONOUN_PREFIXES: Set =
+        Set::from_iter(vec!["dein", "ihr", "mein", "sein", "unser", "unsrig"]).unwrap();
 }
 
 /// Simplify possesive pronoun lemmas.
@@ -350,8 +393,10 @@ where
 mod tests {
     use transform::test_helpers::run_test_cases;
 
-    use super::{SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,
-                SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma};
+    use super::{
+        SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,
+        SimplifyPersonalPronounLemma, SimplifyPossesivePronounLemma,
+    };
 
     #[test]
     pub fn simplify_pidat_lemma() {
