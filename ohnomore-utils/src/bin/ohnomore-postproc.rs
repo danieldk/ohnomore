@@ -36,7 +36,8 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
-    let matches = opts.parse(&args[1..])
+    let matches = opts
+        .parse(&args[1..])
         .or_exit("Cannot parse command-line options", 1);
 
     if matches.opt_present("h") {
@@ -83,7 +84,7 @@ fn main() {
 
         let preproc_sentence: Vec<_> = graph.node_indices().map(|idx| graph[idx].clone()).collect();
         writer
-            .write_sentence(preproc_sentence)
+            .write_sentence(&preproc_sentence)
             .or_exit("Cannot write sentence", 1);
     }
 }
