@@ -175,7 +175,7 @@ where
             }
         }
 
-        return lemma.to_owned();
+        lemma.to_owned()
     }
 }
 

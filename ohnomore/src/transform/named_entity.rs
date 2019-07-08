@@ -74,7 +74,8 @@ impl Operation<char> for CaseInsensitiveLevenshteinOp {
     ) -> Option<usize> {
         use self::CaseInsensitiveLevenshteinOp::*;
 
-        let (from_source_idx, from_target_idx) = self.backtrack(seq_pair, source_idx, target_idx)?;
+        let (from_source_idx, from_target_idx) =
+            self.backtrack(seq_pair, source_idx, target_idx)?;
         let orig_cost = cost_matrix[from_source_idx][from_target_idx];
 
         match *self {
@@ -130,7 +131,7 @@ where
 
     // Copy over aligned characters from the form to the lemma.
     for op in script {
-        if let &CaseInsensitiveLevenshteinOp::Match = op.operation() {
+        if let CaseInsensitiveLevenshteinOp::Match = op.operation() {
             lemma_chars[op.target_idx()] = form_chars[op.source_idx()];
         }
     }

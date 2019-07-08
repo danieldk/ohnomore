@@ -35,14 +35,14 @@ where
         let tag = token.tag();
 
         if tag == ARTICLE_TAG || tag == SUBST_REL_PRONOUN || tag == ATTR_REL_PRONOUN {
-            if form.to_lowercase().starts_with("d") {
+            if form.to_lowercase().starts_with('d') {
                 return String::from("d");
-            } else if form.to_lowercase().starts_with("e") {
+            } else if form.to_lowercase().starts_with('e') {
                 return String::from("e");
             }
         }
 
-        return lemma.to_owned();
+        lemma.to_owned()
     }
 }
 

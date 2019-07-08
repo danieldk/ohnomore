@@ -19,7 +19,8 @@ where
     let token = &g[node];
     let lemma = token.lemma();
 
-    match g.edges_directed(node, Direction::Outgoing)
+    match g
+        .edges_directed(node, Direction::Outgoing)
         .find(|e| e.weight() == AUXILIARY_RELATION)
     {
         Some(edge) => {
@@ -45,7 +46,8 @@ where
     S: AsRef<str>,
 {
     for rel in path {
-        let edge = g.edges_directed(node, Direction::Incoming)
+        let edge = g
+            .edges_directed(node, Direction::Incoming)
             .find(|e| e.weight() == rel.as_ref())?;
         node = edge.source();
     }

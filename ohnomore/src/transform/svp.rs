@@ -88,7 +88,8 @@ where
         inner: all_prefixes.into_iter(),
         lemma,
         tag,
-    }.max_by(|l, r| {
+    }
+    .max_by(|l, r| {
         match l.stripped_form.len().cmp(&r.stripped_form.len()) {
             Ordering::Less => return Ordering::Greater,
             Ordering::Greater => return Ordering::Less,
@@ -97,8 +98,8 @@ where
 
         l.prefixes.len().cmp(&r.prefixes.len()).reverse()
     })
-        .map(|t| t.prefixes)
-        .unwrap_or(Vec::new())
+    .map(|t| t.prefixes)
+    .unwrap_or_else(Vec::new)
 }
 
 fn is_verb<S>(verb: S) -> bool

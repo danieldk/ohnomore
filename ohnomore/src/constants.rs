@@ -84,14 +84,14 @@ pub fn is_verb<S>(tag: S) -> bool
 where
     S: AsRef<str>,
 {
-    tag.as_ref().starts_with("V")
+    tag.as_ref().starts_with('V')
 }
 
 pub fn is_finite_verb<S>(tag: S) -> bool
 where
     S: AsRef<str>,
 {
-    tag.as_ref().starts_with("V") && tag.as_ref().ends_with("FIN")
+    tag.as_ref().starts_with('V') && tag.as_ref().ends_with("FIN")
 }
 
 pub fn is_separable_verb<S>(tag: S) -> bool

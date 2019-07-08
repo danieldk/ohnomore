@@ -29,16 +29,16 @@ impl<'a> Automaton for PrefixAutomaton<'a> {
     }
 
     fn is_match(&self, state: &Self::State) -> bool {
-        match state {
-            &PrefixAutomatonState::Sink => false,
-            &PrefixAutomatonState::State(idx) => self.0.is_char_boundary(idx),
+        match *state {
+            PrefixAutomatonState::Sink => false,
+            PrefixAutomatonState::State(idx) => self.0.is_char_boundary(idx),
         }
     }
 
     fn accept(&self, state: &Self::State, byte: u8) -> Self::State {
-        match state {
-            &PrefixAutomatonState::Sink => PrefixAutomatonState::Sink,
-            &PrefixAutomatonState::State(idx) => {
+        match *state {
+            PrefixAutomatonState::Sink => PrefixAutomatonState::Sink,
+            PrefixAutomatonState::State(idx) => {
                 if idx == self.0.len() {
                     // Recognizing characters beyond the end of the string
                     // leads to the sink state.
