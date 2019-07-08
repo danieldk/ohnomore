@@ -5,12 +5,14 @@
 
 use std::collections::{HashMap, HashSet};
 
+use lazy_static::lazy_static;
+use maplit::{hashmap, hashset};
 use petgraph::graph::NodeIndex;
 
-use automaton::PrefixAutomaton;
-use constants::*;
+use crate::automaton::PrefixAutomaton;
+use crate::constants::*;
+use crate::transform::{DependencyGraph, Token, Transform};
 use fst::{IntoStreamer, Set, Streamer};
-use transform::{DependencyGraph, Token, Transform};
 
 /// Simplify article and relative pronoun lemmas.
 ///
@@ -43,6 +45,7 @@ where
         return lemma.to_owned();
     }
 }
+
 lazy_static! {
     static ref PIAT_PREFIXES: Set = Set::from_iter(vec![
         "einig",
@@ -53,7 +56,8 @@ lazy_static! {
         "kein",
         "manch",
         "wenig",
-    ]).unwrap();
+    ])
+    .unwrap();
 }
 
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
@@ -99,7 +103,7 @@ where
         let mut stream = PIAT_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
+            let prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
             return prefix.to_owned();
         }
@@ -123,7 +127,8 @@ lazy_static! {
         "viel",
         "wenig",
         "zuviel",
-    ]).unwrap();
+    ])
+    .unwrap();
 }
 
 /// Simplify attributing indefinite pronouns with determiner (PIDAT)
@@ -169,7 +174,7 @@ where
         let mut stream = PIDAT_LONG_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
+            let prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
             return prefix.to_owned();
         }
@@ -177,7 +182,7 @@ where
         let mut stream = PIDAT_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
+            let prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
             return prefix.to_owned();
         }
@@ -197,7 +202,8 @@ lazy_static! {
         "einzig",
         "jederman",
         "wenigst",
-    ]).unwrap();
+    ])
+    .unwrap();
     static ref PIS_PREFIXES: Set = Set::from_iter(vec![
         "alle",
         "ander",
@@ -217,7 +223,8 @@ lazy_static! {
         "viel",
         "wenig",
         "zuviel",
-    ]).unwrap();
+    ])
+    .unwrap();
 }
 
 /// Simplify attributing indefinite pronouns without determiner (PIAT)
@@ -252,7 +259,7 @@ where
 
         let mut stream = PIS_LONG_PREFIXES.search(&automaton).into_stream();
         if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
+            let prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
             return prefix.to_owned();
         }
@@ -260,7 +267,7 @@ where
         let mut stream = PIS_PREFIXES.search(&automaton).into_stream();
 
         if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
+            let prefix = String::from_utf8(prefix.to_owned())
                 .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
             return prefix.to_owned();
         }
@@ -269,7 +276,7 @@ where
     }
 }
 
-lazy_static!{
+lazy_static! {
     static ref PRONOUN_SIMPLIFICATIONS: HashMap<&'static str, HashSet<&'static str>> = hashmap! {
         "ich" => hashset!{"ich", "mich", "mir", "meiner"},
         "du" => hashset!{"du", "dir", "dich", "deiner"},
@@ -391,7 +398,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use transform::test_helpers::run_test_cases;
+    use crate::transform::test_helpers::run_test_cases;
 
     use super::{
         SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS,

@@ -2,9 +2,9 @@ use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
 use petgraph::Direction;
 
-use constants::*;
+use crate::constants::*;
 
-use transform::{DependencyGraph, Token};
+use crate::transform::{DependencyGraph, Token};
 
 pub enum VerbLemmaTag {
     Auxiliary,

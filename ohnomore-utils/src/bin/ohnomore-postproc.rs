@@ -1,10 +1,3 @@
-extern crate conllx;
-extern crate getopts;
-extern crate ohnomore;
-extern crate ohnomore_utils;
-extern crate petgraph;
-extern crate stdinout;
-
 use std::env::args;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};

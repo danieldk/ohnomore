@@ -4,7 +4,7 @@ use std::path::Path;
 
 use petgraph::graph::NodeIndex;
 
-use transform::{DependencyGraph, Token, Transform};
+use crate::transform::{DependencyGraph, Token, Transform};
 
 pub struct TestToken {
     form: String,

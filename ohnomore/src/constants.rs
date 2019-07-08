@@ -1,5 +1,8 @@
 use std::collections::HashSet;
 
+use lazy_static::lazy_static;
+use maplit::hashset;
+
 pub static AUXILIARY_MARKER: &str = "%aux";
 pub static PASSIVE_MARKER: &str = "%passiv";
 pub static REFLEXIVE_PERSONAL_PRONOUN_LEMMA: &str = "#refl";

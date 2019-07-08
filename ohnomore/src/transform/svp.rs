@@ -3,9 +3,9 @@ use std::collections::VecDeque;
 
 use fst::{IntoStreamer, Set, Streamer};
 
-use constants::*;
+use crate::constants::*;
 
-use automaton::PrefixAutomaton;
+use crate::automaton::PrefixAutomaton;
 
 /// Candidate list of prefixes and the corresponding stripped form.
 struct PrefixesCandidate<'a> {

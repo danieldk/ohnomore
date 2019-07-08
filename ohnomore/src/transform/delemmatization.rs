@@ -5,8 +5,8 @@
 
 use petgraph::graph::NodeIndex;
 
-use constants::*;
-use transform::{DependencyGraph, Token, Transform};
+use crate::constants::*;
+use crate::transform::{DependencyGraph, Token, Transform};
 
 /// Remove alternative lemma analyses.
 ///
@@ -181,7 +181,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use transform::test_helpers::run_test_cases;
+    use crate::transform::test_helpers::run_test_cases;
 
     use super::{RemoveAuxTag, RemovePassivTag, RemoveSepVerbPrefix, RemoveTruncMarker};
 

@@ -12,11 +12,11 @@ use petgraph::graph::NodeIndex;
 use petgraph::visit::EdgeRef;
 use petgraph::Direction;
 
-use constants::*;
-use transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
-use transform::named_entity::restore_named_entity_case;
-use transform::svp::longest_prefixes;
-use transform::{DependencyGraph, Token, Transform};
+use crate::constants::*;
+use crate::transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
+use crate::transform::named_entity::restore_named_entity_case;
+use crate::transform::svp::longest_prefixes;
+use crate::transform::{DependencyGraph, Token, Transform};
 
 /// Add auxililary/passive markers.
 ///
@@ -331,7 +331,7 @@ mod tests {
     use std::io::BufReader;
     use std::iter::FromIterator;
 
-    use transform::test_helpers::run_test_cases;
+    use crate::transform::test_helpers::run_test_cases;
 
     use super::{
         uppercase_first_char, AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,

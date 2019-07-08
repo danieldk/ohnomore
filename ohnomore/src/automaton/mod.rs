@@ -71,6 +71,7 @@ impl<'a> From<&'a str> for PrefixAutomaton<'a> {
 #[cfg(test)]
 mod tests {
     use fst::Automaton;
+    use quickcheck::quickcheck;
 
     use super::PrefixAutomaton;
 
