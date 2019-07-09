@@ -29,6 +29,8 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
+    opts.optflag("u", "ud", "universal dependencies");
+
     let matches = opts
         .parse(&args[1..])
         .or_exit("Cannot parse command-line options", 1);
@@ -48,18 +50,22 @@ fn main() {
     let prefix_transform =
         MarkVerbPrefix::read_verb_prefixes(prefix_reader).or_exit("Cannot read verb prefixes", 1);
 
-    let transforms = Transforms(vec![
+    let mut transforms = Transforms(vec![
         Box::new(FormAsLemma),
         Box::new(RestoreCase),
         Box::new(AddSeparatedVerbPrefix::new(true)),
         Box::new(prefix_transform),
-        Box::new(AddAuxPassivTag),
         Box::new(SimplifyArticleLemma),
         Box::new(SimplifyPossesivePronounLemma),
         Box::new(SimplifyPIS),
         Box::new(SimplifyPIDAT),
         Box::new(SimplifyPIAT),
     ]);
+
+    // Apply auxiliary/passive markers for non-UD treebanks.
+    if !matches.opt_present("u") {
+        transforms.0.push(Box::new(AddAuxPassivTag));
+    }
 
     let input = Input::from(matches.free.get(1));
     let reader = conllx::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
