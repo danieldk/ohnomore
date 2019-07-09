@@ -56,7 +56,6 @@ lazy_static! {
         "APPR",
         "APPO",
         "APZR",
-        "FM",
         "ITJ",
         "KOUI",
         "KOUS",
@@ -67,6 +66,10 @@ lazy_static! {
         "PTKZU",
         "PTKA",
         "PTKNEG",
+    };
+
+    pub static ref LEMMA_IS_FORM_PRESERVE_CASE_TAGS: HashSet<&'static str> = hashset! {
+        FOREIGN_WORD_TAG,
     };
 
     /// Part-of-speech tags that have special (non-word) lemmas.
