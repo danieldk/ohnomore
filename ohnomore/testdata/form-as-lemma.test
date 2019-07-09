@@ -5,6 +5,10 @@
 und _ KON und
 Und _ KON und
 
+# Foreign words should use the form, retaining case.
+Brasil _ FM Brasil
+improve _ FM improve
+
 # For other tags, nothing changes.
 Auto Foobar NN Foobar
 NBA  Quux   NE Quux

@@ -178,6 +178,8 @@ where
         // Handle tags for which the lemma is the lowercased form.
         if LEMMA_IS_FORM_TAGS.contains(token.tag()) {
             token.form().to_lowercase()
+        } else if LEMMA_IS_FORM_PRESERVE_CASE_TAGS.contains(token.tag()) {
+            token.form().to_owned()
         } else {
             token.lemma().to_owned()
         }
