@@ -23,7 +23,7 @@ fn print_usage(program: &str, opts: Options) {
 
 fn apply_transformations<T>(g: &mut DependencyGraph, idx: NodeIndex, transformations: &[T])
 where
-    T: AsRef<Transform<conllx::Token>>,
+    T: AsRef<dyn Transform<conllx::Token>>,
 {
     for t in transformations {
         let lemma = t.as_ref().transform(g, idx);
@@ -51,7 +51,7 @@ fn main() {
         return;
     }
 
-    let transforms: &[Box<Transform<conllx::Token>>] = &[
+    let transforms: &[Box<dyn Transform<conllx::Token>>] = &[
         Box::new(RemoveAlternatives),
         Box::new(RemoveAuxTag),
         Box::new(RemovePassivTag),
