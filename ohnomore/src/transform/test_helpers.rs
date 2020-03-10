@@ -32,7 +32,7 @@ impl Token for TestToken {
     }
 }
 
-fn read_dependency(iter: &mut Iterator<Item = &str>) -> Option<(String, TestToken)> {
+fn read_dependency(iter: &mut dyn Iterator<Item = &str>) -> Option<(String, TestToken)> {
     // If there is a relation, read it, otherwise bail out.
     let rel = iter.next()?.to_owned();
 
@@ -43,7 +43,7 @@ fn read_dependency(iter: &mut Iterator<Item = &str>) -> Option<(String, TestToke
     ))
 }
 
-fn read_token(iter: &mut Iterator<Item = &str>) -> Option<TestToken> {
+fn read_token(iter: &mut dyn Iterator<Item = &str>) -> Option<TestToken> {
     Some(TestToken {
         form: iter.next()?.to_owned(),
         lemma: iter.next()?.to_owned(),

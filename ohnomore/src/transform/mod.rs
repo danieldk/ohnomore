@@ -42,7 +42,7 @@ where
 }
 
 /// A list of `Transform`s.
-pub struct Transforms<T>(pub Vec<Box<Transform<T>>>)
+pub struct Transforms<T>(pub Vec<Box<dyn Transform<T>>>)
 where
     T: Token + MutableToken;
 
