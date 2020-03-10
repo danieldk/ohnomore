@@ -1,11 +1,10 @@
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
-use fst::{IntoStreamer, Set, Streamer};
+use fst::Set;
 
+use crate::automaton::Prefixes;
 use crate::constants::*;
-
-use crate::automaton::PrefixAutomaton;
 
 /// Candidate list of prefixes and the corresponding stripped form.
 struct PrefixesCandidate<'a> {
@@ -36,10 +35,10 @@ fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<PrefixesCandidate<'a>> {
             prefixes: prefixes.clone(),
         });
 
-        for prefix in find_prefixes(prefix_set, stripped_form) {
+        for prefix in prefix_set.prefixes(&stripped_form) {
             let mut prefixes = prefixes.clone();
             let prefix_len = prefix.len();
-            prefixes.push(prefix);
+            prefixes.push(prefix.to_owned());
             q.push_back(PrefixesCandidate {
                 stripped_form: &stripped_form[prefix_len..],
                 prefixes,
@@ -48,28 +47,6 @@ fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<PrefixesCandidate<'a>> {
     }
 
     result
-}
-
-fn find_prefixes<S>(prefix_set: &Set, s: S) -> Vec<String>
-where
-    S: AsRef<str>,
-{
-    let automaton = PrefixAutomaton::from(s.as_ref());
-
-    let mut prefixes = Vec::new();
-
-    let mut stream = prefix_set.search(&automaton).into_stream();
-    while let Some(prefix) = stream.next() {
-        prefixes.push(prefix.to_owned());
-    }
-
-    prefixes
-        .into_iter()
-        .map(|p| {
-            String::from_utf8(p)
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix")
-        })
-        .collect()
 }
 
 pub fn longest_prefixes<F, L, T>(prefix_set: &Set, form: F, lemma: L, tag: T) -> Vec<String>

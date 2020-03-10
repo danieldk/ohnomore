@@ -5,14 +5,14 @@
 
 use std::collections::{HashMap, HashSet};
 
+use fst::Set;
 use lazy_static::lazy_static;
 use maplit::{hashmap, hashset};
 use petgraph::graph::NodeIndex;
 
-use crate::automaton::PrefixAutomaton;
+use crate::automaton::LongestPrefix;
 use crate::constants::*;
 use crate::transform::{DependencyGraph, Token, Transform};
-use fst::{IntoStreamer, Set, Streamer};
 
 /// Simplify article and relative pronoun lemmas.
 ///
@@ -98,13 +98,7 @@ where
             return lemma.to_owned();
         }
 
-        let automaton = PrefixAutomaton::from(form.as_ref());
-
-        let mut stream = PIAT_PREFIXES.search(&automaton).into_stream();
-
-        if let Some(prefix) = stream.next() {
-            let prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(prefix) = PIAT_PREFIXES.longest_prefix(&form) {
             return prefix.to_owned();
         }
 
@@ -169,21 +163,12 @@ where
         }
 
         let form = form.to_lowercase();
-        let automaton = PrefixAutomaton::from(form.as_ref());
 
-        let mut stream = PIDAT_LONG_PREFIXES.search(&automaton).into_stream();
-
-        if let Some(prefix) = stream.next() {
-            let prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(prefix) = PIDAT_LONG_PREFIXES.longest_prefix(&form) {
             return prefix.to_owned();
         }
 
-        let mut stream = PIDAT_PREFIXES.search(&automaton).into_stream();
-
-        if let Some(prefix) = stream.next() {
-            let prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(prefix) = PIDAT_PREFIXES.longest_prefix(&form) {
             return prefix.to_owned();
         }
 
@@ -255,20 +240,11 @@ where
             return "ander".to_owned();
         }
 
-        let automaton = PrefixAutomaton::from(form.as_ref());
-
-        let mut stream = PIS_LONG_PREFIXES.search(&automaton).into_stream();
-        if let Some(prefix) = stream.next() {
-            let prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(prefix) = PIS_LONG_PREFIXES.longest_prefix(&form) {
             return prefix.to_owned();
         }
 
-        let mut stream = PIS_PREFIXES.search(&automaton).into_stream();
-
-        if let Some(prefix) = stream.next() {
-            let prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(prefix) = PIS_PREFIXES.longest_prefix(&form) {
             return prefix.to_owned();
         }
 
@@ -375,18 +351,15 @@ where
         }
 
         let form = form.to_lowercase();
-        let automaton = PrefixAutomaton::from(form.as_ref());
-        let mut stream = if tag == SUBST_POSSESIVE_PRONOUN_TAG {
-            SUBST_POSS_PRONOUN_PREFIXES.search(&automaton).into_stream()
+        let prefix = if tag == SUBST_POSSESIVE_PRONOUN_TAG {
+            SUBST_POSS_PRONOUN_PREFIXES.longest_prefix(&form)
         } else {
-            ATTR_POSS_PRONOUN_PREFIXES.search(&automaton).into_stream()
+            ATTR_POSS_PRONOUN_PREFIXES.longest_prefix(&form)
         };
 
-        if let Some(prefix) = stream.next() {
-            let mut prefix = String::from_utf8(prefix.to_owned())
-                .expect("Cannot decode prefix, PrefixAutomaton returned invalid prefix");
+        if let Some(mut prefix) = prefix {
             if prefix == "eure" {
-                prefix = "euer".to_owned();
+                prefix = "euer";
             }
 
             return prefix.to_owned();

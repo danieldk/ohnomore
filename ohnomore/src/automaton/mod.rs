@@ -1,144 +1,97 @@
-use std::borrow::Cow;
+use fst::raw::{Fst, Node};
+use fst::Set;
 
-use fst::Automaton;
-
-pub enum PrefixAutomatonState {
-    Sink,
-    State(usize),
+/// Search prefixes of a string in a set.
+pub trait Prefixes {
+    /// Get an iterator over the prefixes of a string that are in a set.
+    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b>;
 }
 
-/// An automaton that matches every prefix of a string. For
-/// example, an automaton that matches *"hello"* will match:
-/// *""*, *"h"*, *"he"*, *"hel"*, *"hell"*, *"hello"*.
-///
-/// Only prefixes consisting of complete code points are
-/// recognized. For example, for the string *"ë"*, *[]*
-/// and *[0xc3, 0xab]* are accepted, whereas *[0xc3]* is
-/// not.
-///
-/// Since the `fst` API works on bytes, the automaton will also
-/// match partial characters for multi-byte characters. Rejecting
-/// such strings could be a future enhancement.
-pub struct PrefixAutomaton<'a>(Cow<'a, str>);
-
-impl<'a> Automaton for PrefixAutomaton<'a> {
-    type State = PrefixAutomatonState;
-
-    fn start(&self) -> Self::State {
-        PrefixAutomatonState::State(0)
-    }
-
-    fn is_match(&self, state: &Self::State) -> bool {
-        match *state {
-            PrefixAutomatonState::Sink => false,
-            PrefixAutomatonState::State(idx) => self.0.is_char_boundary(idx),
+impl Prefixes for Set {
+    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b> {
+        PrefixIter {
+            fst: self.as_fst(),
+            node: self.as_fst().root(),
+            prefix_len: 0,
+            word,
         }
     }
+}
 
-    fn accept(&self, state: &Self::State, byte: u8) -> Self::State {
-        match *state {
-            PrefixAutomatonState::Sink => PrefixAutomatonState::Sink,
-            PrefixAutomatonState::State(idx) => {
-                if idx == self.0.len() {
-                    // Recognizing characters beyond the end of the string
-                    // leads to the sink state.
-                    PrefixAutomatonState::Sink
-                } else if self.0.as_bytes()[idx] == byte {
-                    // Move to the next state if the byte is recognized.
-                    PrefixAutomatonState::State(idx + 1)
-                } else {
-                    // Otherwise, the byte is not recognized and we move
-                    // to the sink state.
-                    PrefixAutomatonState::Sink
+/// Prefix iterator.
+pub struct PrefixIter<'a, 'b> {
+    fst: &'a Fst,
+    node: Node<'a>,
+    prefix_len: usize,
+    word: &'b str,
+}
+
+impl<'a, 'b> Iterator for PrefixIter<'a, 'b> {
+    type Item = &'b str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while self.prefix_len < self.word.len() {
+            match self.node.find_input(self.word.as_bytes()[self.prefix_len]) {
+                Some(trans_idx) => {
+                    let trans = self.node.transition(trans_idx);
+                    self.node = self.fst.node(trans.addr);
+                    self.prefix_len += 1;
                 }
+                None => return None,
+            };
+
+            if self.node.is_final() {
+                return Some(&self.word[..self.prefix_len]);
             }
         }
+
+        None
     }
 }
 
-impl From<String> for PrefixAutomaton<'static> {
-    fn from(s: String) -> Self {
-        PrefixAutomaton(Cow::Owned(s))
-    }
+/// Search the longest prefix of a string in a set.
+pub trait LongestPrefix {
+    /// Search the longest prefix of a string in a set.
+    fn longest_prefix<'a>(&self, word: &'a str) -> Option<&'a str>;
 }
 
-impl<'a> From<&'a str> for PrefixAutomaton<'a> {
-    fn from(s: &'a str) -> Self {
-        PrefixAutomaton(Cow::Borrowed(s))
+impl LongestPrefix for fst::Set {
+    fn longest_prefix<'a>(&self, word: &'a str) -> Option<&'a str> {
+        self.prefixes(word).last()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use fst::Automaton;
-    use quickcheck::quickcheck;
+    use fst::{Set, SetBuilder};
 
-    use super::PrefixAutomaton;
+    use super::Prefixes;
 
-    fn automaton_match<A>(automaton: A, data: &[u8]) -> bool
-    where
-        A: Automaton,
-    {
-        let mut state = automaton.start();
-
-        for byte in data {
-            state = automaton.accept(&state, *byte);
-        }
-
-        automaton.is_match(&state)
+    fn test_set() -> Set {
+        let mut builder = SetBuilder::memory();
+        builder
+            .extend_iter(&["p", "pre", "pref", "prefix"])
+            .unwrap();
+        let bytes = builder.into_inner().unwrap();
+        Set::from_bytes(bytes).unwrap()
     }
 
-    /// Check that the automaton only matches on codepoint boundaries.
     #[test]
-    fn do_not_match_incomplete_prefix_test() {
-        // UTF-8 encoding: [0xc3, 0xa4, 0xc3, 0xab]
-        let s = "äë";
-        let s_bytes = s.as_bytes();
+    fn finds_prefixes() {
+        let set = test_set();
 
-        let automaton = PrefixAutomaton::from(s);
+        let mut iter = set.prefixes("prefixes");
+        assert_eq!(iter.next(), Some("p"));
+        assert_eq!(iter.next(), Some("pre"));
+        assert_eq!(iter.next(), Some("pref"));
+        assert_eq!(iter.next(), Some("prefix"));
+        assert!(iter.next().is_none());
 
-        assert!(automaton_match(&automaton, &s_bytes[..0]));
-        assert!(!automaton_match(&automaton, &s_bytes[..1]));
-        assert!(automaton_match(&automaton, &s_bytes[..2]));
-        assert!(!automaton_match(&automaton, &s_bytes[..3]));
-        assert!(automaton_match(&automaton, &s_bytes[..4]));
-    }
+        let mut iter = set.prefixes("pre");
+        assert_eq!(iter.next(), Some("p"));
+        assert_eq!(iter.next(), Some("pre"));
+        assert!(iter.next().is_none());
 
-    quickcheck! {
-        /// Check that all prefixes of a string are matched by its
-        /// prefix automaton.
-        fn prefix_matches_prop(s: String) -> bool {
-            let automaton = PrefixAutomaton::from(s.as_str());
-            let chars: Vec<_> = s.chars().collect();
-
-            for idx in 0..(chars.len() + 1) {
-                let prefix = &chars[..idx];
-                if !automaton_match(&automaton, prefix.iter().cloned().collect::<String>().as_bytes()) {
-                    return false;
-                }
-            }
-
-            true
-        }
-    }
-
-    quickcheck! {
-        /// Check prefixes on arbitrary strings.
-        fn random_string_prefix_matches_prop(s1: String, s2: String) -> bool {
-            let automaton = PrefixAutomaton::from(s1.as_str());
-
-            let chars1: Vec<_> = s1.chars().collect();
-            let chars2: Vec<_> = s2.chars().collect();
-
-            for idx in 0..(chars2.len() + 1) {
-                let prefix = &chars2[..idx];
-
-                if !automaton_match(&automaton, prefix.iter().cloned().collect::<String>().as_bytes()) && chars1.starts_with(prefix) {
-                    return false;
-                }
-            }
-
-            true
-        }
+        assert!(set.prefixes("fix").next().is_none());
     }
 }

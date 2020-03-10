@@ -1,4 +1,4 @@
-pub mod automaton;
+mod automaton;
 
 pub mod constants;
 
