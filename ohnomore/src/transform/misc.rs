@@ -8,11 +8,10 @@ use std::collections::{HashMap, HashSet};
 use fst::Set;
 use lazy_static::lazy_static;
 use maplit::{hashmap, hashset};
-use petgraph::graph::NodeIndex;
 
 use crate::automaton::LongestPrefix;
 use crate::constants::*;
-use crate::transform::{DependencyGraph, Token, Transform};
+use crate::transform::{DependencyGraph, Transform};
 
 /// Simplify article and relative pronoun lemmas.
 ///
@@ -24,12 +23,9 @@ use crate::transform::{DependencyGraph, Token, Transform};
 /// * *dessen* -> *d*
 pub struct SimplifyArticleLemma;
 
-impl<T> Transform<T> for SimplifyArticleLemma
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyArticleLemma {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
         let tag = token.tag();
@@ -78,12 +74,9 @@ lazy_static! {
 ///
 
 pub struct SimplifyPIAT;
-impl<T> Transform<T> for SimplifyPIAT
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyPIAT {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
         let tag = token.tag();
@@ -148,12 +141,9 @@ lazy_static! {
 ///
 
 pub struct SimplifyPIDAT;
-impl<T> Transform<T> for SimplifyPIDAT
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyPIDAT {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
         let tag = token.tag();
@@ -220,12 +210,9 @@ lazy_static! {
 ///
 
 pub struct SimplifyPIS;
-impl<T> Transform<T> for SimplifyPIS
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyPIS {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
         let tag = token.tag();
@@ -298,12 +285,9 @@ fn inside_out(map: &HashMap<&'static str, HashSet<&'static str>>) -> HashMap<Str
 /// In the case of the ambigious *ihr*, the lemma *sie* is always used.
 pub struct SimplifyPersonalPronounLemma;
 
-impl<T> Transform<T> for SimplifyPersonalPronounLemma
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyPersonalPronounLemma {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let tag = token.tag();
         let lemma = token.lemma();
 
@@ -336,12 +320,9 @@ lazy_static! {
 /// * *deiner* -> *dein*
 pub struct SimplifyPossesivePronounLemma;
 
-impl<T> Transform<T> for SimplifyPossesivePronounLemma
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for SimplifyPossesivePronounLemma {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let tag = token.tag();
         let form = token.form();
         let lemma = token.lemma();

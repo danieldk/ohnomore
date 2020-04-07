@@ -2,7 +2,7 @@ use std::env::args;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
-use conllx::WriteSentence;
+use conllx::io::WriteSentence;
 use getopts::Options;
 use ohnomore::transform::lemmatization::{
     AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes, RestoreCase,
@@ -11,7 +11,6 @@ use ohnomore::transform::misc::{
     SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS, SimplifyPossesivePronounLemma,
 };
 use ohnomore::transform::Transforms;
-use ohnomore_utils::graph::sentence_to_graph;
 use stdinout::{Input, OrExit, Output};
 
 fn print_usage(program: &str, opts: Options) {
@@ -61,22 +60,20 @@ fn main() {
     ]);
 
     let input = Input::from(matches.free.get(1));
-    let reader = conllx::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
+    let reader = conllx::io::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
 
     let output = Output::from(matches.free.get(2));
-    let mut writer = conllx::Writer::new(BufWriter::new(
+    let mut writer = conllx::io::Writer::new(BufWriter::new(
         output.write().or_exit("Cannot open file for writing", 1),
     ));
 
     for sentence in reader {
-        let sentence = sentence.or_exit("Cannot read sentence", 1);
-        let mut graph = sentence_to_graph(&sentence).or_exit("Error constructing graph", 1);
+        let mut sentence = sentence.or_exit("Cannot read sentence", 1);
 
-        transforms.transform(&mut graph);
+        transforms.transform(&mut sentence);
 
-        let preproc_sentence: Vec<_> = graph.node_indices().map(|idx| graph[idx].clone()).collect();
         writer
-            .write_sentence(&preproc_sentence)
+            .write_sentence(&sentence)
             .or_exit("Cannot write sentence", 1);
     }
 }

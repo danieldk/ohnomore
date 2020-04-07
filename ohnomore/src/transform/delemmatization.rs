@@ -3,10 +3,8 @@
 //! This module provides transformations that converts TüBa-D/Z-style lemmas
 //! to `regular' lemmas.
 
-use petgraph::graph::NodeIndex;
-
 use crate::constants::*;
-use crate::transform::{DependencyGraph, Token, Transform};
+use crate::transform::{DependencyGraph, Transform};
 
 /// Remove alternative lemma analyses.
 ///
@@ -14,12 +12,9 @@ use crate::transform::{DependencyGraph, Token, Transform};
 /// transformation removes all but the first analysis.
 pub struct RemoveAlternatives;
 
-impl<T> Transform<T> for RemoveAlternatives
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for RemoveAlternatives {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let mut lemma = token.lemma();
 
         if token.tag().starts_with(PUNCTUATION_PREFIX)
@@ -43,12 +38,9 @@ where
 /// replaces this pseudo-lemma by the lowercased form.
 pub struct RemoveReflexiveTag;
 
-impl<T> Transform<T> for RemoveReflexiveTag
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for RemoveReflexiveTag {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
 
         if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG
@@ -69,12 +61,9 @@ where
 /// *zeichnen*.
 pub struct RemoveSepVerbPrefix;
 
-impl<T> Transform<T> for RemoveSepVerbPrefix
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for RemoveSepVerbPrefix {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let mut lemma = token.lemma();
 
         if is_verb(token.tag()) {
@@ -102,12 +91,9 @@ where
 /// *n*, the lemma is also lowercased.
 pub struct RemoveTruncMarker;
 
-impl<T> Transform<T> for RemoveTruncMarker
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for RemoveTruncMarker {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
 
         if token.tag() == TRUNCATED_TAG {
