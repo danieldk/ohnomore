@@ -2,20 +2,46 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-use petgraph::graph::NodeIndex;
+use petgraph::graph::{DiGraph, NodeIndex};
+use petgraph::visit::EdgeRef;
+use petgraph::Direction;
 
-use crate::transform::{DependencyGraph, Token, Transform};
+use crate::transform::{DependencyGraph, Token, TokenMut, Transform};
+
+pub struct TestCase {
+    graph: TestCaseGraph,
+    index: usize,
+    correct: String,
+}
+
+struct TestCaseGraph(pub DiGraph<TestToken, String>);
+
+impl DependencyGraph for TestCaseGraph {
+    fn dependents<'a>(&'a self, idx: usize) -> Box<dyn Iterator<Item = (usize, String)> + 'a> {
+        Box::new(
+            self.0
+                .edges_directed(NodeIndex::new(idx), Direction::Outgoing)
+                .map(|e| (e.target().index(), e.weight().to_owned())),
+        )
+    }
+
+    fn token(&self, idx: usize) -> &dyn Token {
+        &self.0[NodeIndex::new(idx)]
+    }
+
+    fn token_mut(&mut self, idx: usize) -> &mut dyn TokenMut {
+        &mut self.0[NodeIndex::new(idx)]
+    }
+
+    fn len(&self) -> usize {
+        self.0.node_count()
+    }
+}
 
 pub struct TestToken {
     form: String,
     lemma: String,
     tag: String,
-}
-
-pub struct TestCase {
-    graph: DependencyGraph<TestToken>,
-    index: NodeIndex,
-    correct: String,
 }
 
 impl Token for TestToken {
@@ -29,6 +55,12 @@ impl Token for TestToken {
 
     fn tag(&self) -> &str {
         &self.tag
+    }
+}
+
+impl TokenMut for TestToken {
+    fn set_lemma(&mut self, lemma: Option<String>) {
+        self.lemma = lemma.expect("Missing lemma for test token");
     }
 }
 
@@ -73,7 +105,13 @@ where
 
         let mut iter = line.split_whitespace();
 
-        let mut graph = DependencyGraph::new();
+        let mut graph = DiGraph::new();
+
+        graph.add_node(TestToken {
+            form: "ROOT".to_string(),
+            lemma: "ROOT".to_string(),
+            tag: "ROOT".to_string(),
+        });
 
         let test_token = read_token(&mut iter).unwrap();
         let index = graph.add_node(test_token);
@@ -92,8 +130,8 @@ where
         }
 
         let test_case = TestCase {
-            graph,
-            index,
+            graph: TestCaseGraph(graph),
+            index: index.index(),
             correct,
         };
 
@@ -106,7 +144,7 @@ where
 pub fn run_test_cases<P, T>(filename: P, transform: T)
 where
     P: AsRef<Path>,
-    T: Transform<TestToken>,
+    T: Transform,
 {
     let f = File::open(filename).unwrap();
     let test_cases = read_test_cases(BufReader::new(f));

@@ -28,11 +28,11 @@ pub(crate) static ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET: &str = "PIAT";
 pub(crate) static ATTRIBUTING_INDEF_PRONOUN_WITH_DET: &str = "PIDAT";
 
 lazy_static! {
-    pub static ref NO_LEMMA_TAGS: HashSet<&'static str> = hashset! {
+    pub(crate) static ref NO_LEMMA_TAGS: HashSet<&'static str> = hashset! {
         "PTKVZ"
     };
 
-    pub static ref LEMMA_IS_FORM_TAGS: HashSet<&'static str> = hashset! {
+    pub(crate) static ref LEMMA_IS_FORM_TAGS: HashSet<&'static str> = hashset! {
         "$,",
         "$.",
         "$(",

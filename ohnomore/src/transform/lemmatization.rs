@@ -8,14 +8,11 @@ use std::io::BufRead;
 
 use failure::Error;
 use fst::{Set, SetBuilder};
-use petgraph::graph::NodeIndex;
-use petgraph::visit::EdgeRef;
-use petgraph::Direction;
 
 use crate::constants::*;
 use crate::transform::named_entity::restore_named_entity_case;
 use crate::transform::svp::longest_prefixes;
-use crate::transform::{DependencyGraph, Token, Transform};
+use crate::transform::{DependencyGraph, Transform};
 
 /// Add separable verb prefixes to verbs.
 ///
@@ -43,12 +40,9 @@ impl AddSeparatedVerbPrefix {
     }
 }
 
-impl<T> Transform<T> for AddSeparatedVerbPrefix
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for AddSeparatedVerbPrefix {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
 
         if !is_separable_verb(token.tag()) {
@@ -63,15 +57,15 @@ where
         // Fixme: check AVZ/KON relation as well?
         // Fixme: what about particles linked KON?
         let mut prefix_iter = graph
-            .edges_directed(node, Direction::Outgoing)
-            .filter(|e| graph[e.target()].tag() == SEPARABLE_PARTICLE_POS);
+            .dependents(node)
+            .filter(|(dependent, _)| graph.token(*dependent).tag() == SEPARABLE_PARTICLE_POS);
 
         if self.multiple_prefixes {
             let mut lemmas = Vec::new();
 
             // Fixme: prefixes are not returned in sentence order?
-            for edge in prefix_iter {
-                let prefix = &graph[edge.target()];
+            for (dependant, _) in prefix_iter {
+                let prefix = graph.token(dependant);
                 lemmas.push(format!("{}#{}", prefix.form().to_lowercase(), lemma));
             }
 
@@ -81,8 +75,8 @@ where
                 lemmas.join("|")
             }
         } else {
-            if let Some(edge) = prefix_iter.next() {
-                let prefix = &graph[edge.target()];
+            if let Some((dependant, _)) = prefix_iter.next() {
+                let prefix = graph.token(dependant);
                 lemma.insert_str(0, &format!("{}#", prefix.form().to_lowercase()));
             }
 
@@ -94,12 +88,9 @@ where
 /// Lemmatize tokens where the form is the lemma.
 pub struct FormAsLemma;
 
-impl<T> Transform<T> for FormAsLemma
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for FormAsLemma {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
 
         // Handle tags for which the lemma is the lowercased form.
         if LEMMA_IS_FORM_TAGS.contains(token.tag()) {
@@ -153,12 +144,9 @@ impl MarkVerbPrefix {
     }
 }
 
-impl<T> Transform<T> for MarkVerbPrefix
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for MarkVerbPrefix {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
         let lemma = token.lemma();
         let lemma_lc = lemma.to_lowercase();
 
@@ -221,12 +209,9 @@ impl ReadVerbPrefixes for MarkVerbPrefix {
 
 pub struct RestoreCase;
 
-impl<T> Transform<T> for RestoreCase
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
+impl Transform for RestoreCase {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
 
         if token.tag() == NOUN_TAG {
             uppercase_first_char(token.lemma())
