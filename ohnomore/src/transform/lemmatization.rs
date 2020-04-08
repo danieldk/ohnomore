@@ -13,83 +13,9 @@ use petgraph::visit::EdgeRef;
 use petgraph::Direction;
 
 use crate::constants::*;
-use crate::transform::auxpassiv::{ancestor_path, verb_lemma_tag, VerbLemmaTag};
 use crate::transform::named_entity::restore_named_entity_case;
 use crate::transform::svp::longest_prefixes;
 use crate::transform::{DependencyGraph, Token, Transform};
-
-/// Add auxililary/passive markers.
-///
-/// This transformation adds auxiliary/passive markers to auxiliary/passive
-/// verbs. Verbs such as *sein* both have auxiliary and other readings. E.g.
-///
-/// * *Ich hab einen traum* (non-auxiliary)
-/// * *Ich hab geträumt* (auxiliary)
-///
-/// The TüBa-D/Z marks auxiliary and passive readings using the *%aux* and
-/// *%passiv* suffixes (e.g. *haben%aux* and *werden%passiv*).
-///
-/// This transformation adds such markers. It distinguishes auxiliary/passive
-/// readings from other readings using dependency structure.
-pub struct AddAuxPassivTag;
-
-impl<T> Transform<T> for AddAuxPassivTag
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
-        let lemma = token.lemma();
-
-        // The auxiliary tag only applies to auxiliaries and modals.
-        if !token.tag().starts_with(AUXILIARY_PREFIX) && !token.tag().starts_with(MODAL_PREFIX) {
-            return lemma.to_owned();
-        }
-
-        // Find the verb's lemma tag.
-        match verb_lemma_tag(graph, node) {
-            VerbLemmaTag::Auxiliary => return format!("{}{}", lemma, AUXILIARY_MARKER),
-            VerbLemmaTag::Passive => return format!("{}{}", lemma, PASSIVE_MARKER),
-            VerbLemmaTag::None => (),
-        }
-
-        // If the verb lemma tag was none, it could be that a verb
-        // is indirectly attached to the auxiliary through conjunction.
-        //
-        // E.g.: "Sie wollen und werden ein Schauspielhaus fertigstellen."
-        if graph
-            .edges_directed(node, Direction::Outgoing)
-            .find(|e| e.weight() != PUNCTUATION_RELATION)
-            .is_none()
-        {
-            if let Some(node) = ancestor_path(
-                graph,
-                node,
-                &[CONJ_COMPLEMENT_RELATION, COORDINATION_RELATION],
-            ) {
-                match verb_lemma_tag(graph, node) {
-                    VerbLemmaTag::Auxiliary => return format!("{}{}", lemma, AUXILIARY_MARKER),
-                    VerbLemmaTag::Passive => return format!("{}{}", lemma, PASSIVE_MARKER),
-                    VerbLemmaTag::None => (),
-                }
-            }
-        }
-
-        // There are no outgoing edges with the auxiliary relation.
-        // Check that this verb is not an adverbial modification of
-        // an infinitive.
-        for edge in graph.edges_directed(node, Direction::Incoming) {
-            let head_tag = graph[edge.source()].tag();
-            if edge.weight() == ADVERBIAL_RELATION
-                && (head_tag == INFINITIVE_VERB_TAG || head_tag == PARTICIPLE_TAG)
-            {
-                return format!("{}{}", lemma, AUXILIARY_MARKER);
-            }
-        }
-
-        lemma.to_owned()
-    }
-}
 
 /// Add separable verb prefixes to verbs.
 ///
@@ -336,7 +262,7 @@ mod tests {
     use crate::transform::test_helpers::run_test_cases;
 
     use super::{
-        uppercase_first_char, AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
+        uppercase_first_char, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
         ReadVerbPrefixes, RestoreCase,
     };
 
@@ -345,11 +271,6 @@ mod tests {
         assert_eq!(uppercase_first_char("test"), "Test");
         assert_eq!(uppercase_first_char("Test"), "Test");
         assert_eq!(uppercase_first_char(""), "");
-    }
-
-    #[test]
-    pub fn add_aux_passiv_tag() {
-        run_test_cases("testdata/add-aux-passiv-tag.test", AddAuxPassivTag);
     }
 
     #[test]
