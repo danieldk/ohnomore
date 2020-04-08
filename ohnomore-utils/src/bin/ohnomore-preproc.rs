@@ -1,7 +1,7 @@
 use std::env::args;
 use std::io::BufWriter;
 
-use conllx::io::WriteSentence;
+use conllu::io::{Reader, WriteSentence, Writer};
 use getopts::Options;
 use ohnomore::transform::delemmatization::{
     RemoveAlternatives, RemoveReflexiveTag, RemoveSepVerbPrefix, RemoveTruncMarker,
@@ -47,10 +47,10 @@ fn main() {
     ]);
 
     let input = Input::from(matches.free.get(0));
-    let reader = conllx::io::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
+    let reader = Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
 
     let output = Output::from(matches.free.get(1));
-    let mut writer = conllx::io::Writer::new(BufWriter::new(
+    let mut writer = Writer::new(BufWriter::new(
         output.write().or_exit("Cannot open file for writing", 1),
     ));
 

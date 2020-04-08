@@ -1,4 +1,4 @@
-use conllx;
+use conllu::graph::Sentence;
 
 #[allow(clippy::len_without_is_empty)]
 pub trait DependencyGraph {
@@ -11,7 +11,7 @@ pub trait DependencyGraph {
     fn len(&self) -> usize;
 }
 
-impl DependencyGraph for conllx::graph::Sentence {
+impl DependencyGraph for Sentence {
     fn dependents<'a>(&'a self, idx: usize) -> Box<dyn Iterator<Item = (usize, String)> + 'a> {
         Box::new(self.dep_graph().dependents(idx).map(|triple| {
             (
@@ -51,7 +51,7 @@ pub trait Token {
     fn tag(&self) -> &str;
 }
 
-impl Token for conllx::token::Token {
+impl Token for conllu::token::Token {
     fn form(&self) -> &str {
         self.form()
     }
@@ -61,11 +61,11 @@ impl Token for conllx::token::Token {
     }
 
     fn tag(&self) -> &str {
-        self.pos().unwrap()
+        self.xpos().unwrap()
     }
 }
 
-impl TokenMut for conllx::token::Token {
+impl TokenMut for conllu::token::Token {
     fn set_lemma(&mut self, lemma: Option<String>) {
         self.set_lemma(lemma);
     }
