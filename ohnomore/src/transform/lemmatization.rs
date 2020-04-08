@@ -4,7 +4,7 @@
 //! lemmas.
 
 use std::collections::HashMap;
-use std::io::BufRead;
+use std::io::{BufRead, Cursor};
 
 use failure::Error;
 use fst::{Set, SetBuilder};
@@ -148,15 +148,21 @@ impl MarkVerbPrefix {
     /// Create this transformation. A simple lookup for prefix verbs can be
     /// provided. More crucially, a set of prefixes must be provided to find
     /// prefixes.
-    pub fn new(prefix_verbs: HashMap<String, String>, prefixes: Set) -> Self {
-        MarkVerbPrefix {
-            prefix_verbs,
-            prefixes,
-        }
+    pub fn new() -> Self {
+        MarkVerbPrefix::read_verb_prefixes(Cursor::new(include_str!(
+            "../../data/tdz10-separable-prefixes.txt"
+        )))
+        .expect("Invalid separable verb prefix data")
     }
 
     pub fn set_prefix_verbs(&mut self, prefix_verbs: HashMap<String, String>) {
         self.prefix_verbs = prefix_verbs;
+    }
+}
+
+impl Default for MarkVerbPrefix {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -197,7 +203,7 @@ impl Transform for MarkVerbPrefix {
     }
 }
 
-pub trait ReadVerbPrefixes {
+trait ReadVerbPrefixes {
     fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, Error>
     where
         R: BufRead;
@@ -219,7 +225,10 @@ impl ReadVerbPrefixes for MarkVerbPrefix {
         let bytes = builder.into_inner()?;
         let prefixes = Set::from_bytes(bytes)?;
 
-        Ok(MarkVerbPrefix::new(HashMap::new(), prefixes))
+        Ok(MarkVerbPrefix {
+            prefix_verbs: HashMap::new(),
+            prefixes,
+        })
     }
 }
 
@@ -256,15 +265,12 @@ where
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
-    use std::fs::File;
-    use std::io::BufReader;
     use std::iter::FromIterator;
 
     use crate::transform::test_helpers::run_test_cases;
 
     use super::{
-        uppercase_first_char, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix,
-        ReadVerbPrefixes, RestoreCase,
+        uppercase_first_char, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, RestoreCase,
     };
 
     #[test]
@@ -296,8 +302,7 @@ mod tests {
             String::from("ab#bestellen"),
         )]);
 
-        let reader = BufReader::new(File::open("data/tdz10-separable-prefixes.txt").unwrap());
-        let mut transform = MarkVerbPrefix::read_verb_prefixes(reader).unwrap();
+        let mut transform = MarkVerbPrefix::new();
         transform.set_prefix_verbs(prefix_verbs);
 
         run_test_cases("testdata/mark-verb-prefix.test", transform);
