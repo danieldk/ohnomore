@@ -65,8 +65,6 @@ where
     }
 }
 
-mod auxpassiv;
-
 pub mod delemmatization;
 
 pub mod lemmatization;

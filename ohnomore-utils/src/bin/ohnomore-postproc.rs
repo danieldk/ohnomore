@@ -5,8 +5,7 @@ use std::io::{BufReader, BufWriter};
 use conllx::WriteSentence;
 use getopts::Options;
 use ohnomore::transform::lemmatization::{
-    AddAuxPassivTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes,
-    RestoreCase,
+    AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes, RestoreCase,
 };
 use ohnomore::transform::misc::{
     SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS, SimplifyPossesivePronounLemma,
@@ -29,7 +28,6 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
-    opts.optflag("u", "ud", "universal dependencies");
 
     let matches = opts
         .parse(&args[1..])
@@ -50,7 +48,7 @@ fn main() {
     let prefix_transform =
         MarkVerbPrefix::read_verb_prefixes(prefix_reader).or_exit("Cannot read verb prefixes", 1);
 
-    let mut transforms = Transforms(vec![
+    let transforms = Transforms(vec![
         Box::new(FormAsLemma),
         Box::new(RestoreCase),
         Box::new(AddSeparatedVerbPrefix::new(true)),
@@ -61,11 +59,6 @@ fn main() {
         Box::new(SimplifyPIDAT),
         Box::new(SimplifyPIAT),
     ]);
-
-    // Apply auxiliary/passive markers for non-UD treebanks.
-    if !matches.opt_present("u") {
-        transforms.0.push(Box::new(AddAuxPassivTag));
-    }
 
     let input = Input::from(matches.free.get(1));
     let reader = conllx::Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
