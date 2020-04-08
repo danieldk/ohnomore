@@ -43,9 +43,7 @@ impl Transform for RemoveReflexiveTag {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG
-            && lemma == REFLEXIVE_PERSONAL_PRONOUN_LEMMA
-        {
+        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
             return token.form().to_lowercase();
         }
 
