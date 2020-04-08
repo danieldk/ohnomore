@@ -1,8 +1,0 @@
-language: rust
-rust:
-  - 1.36.0
-  - stable
-before_script:
-  - rustup component add clippy
-  - rustup component add rustfmt
-script: ci/script.sh
