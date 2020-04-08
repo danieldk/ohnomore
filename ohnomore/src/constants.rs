@@ -3,14 +3,10 @@ use std::collections::HashSet;
 use lazy_static::lazy_static;
 use maplit::hashset;
 
-pub static AUXILIARY_MARKER: &str = "%aux";
-pub static PASSIVE_MARKER: &str = "%passiv";
 pub static REFLEXIVE_PERSONAL_PRONOUN_LEMMA: &str = "#refl";
 
 pub static SEPARABLE_PARTICLE_POS: &str = "PTKVZ";
 
-pub static AUXILIARY_PREFIX: &str = "VA";
-pub static MODAL_PREFIX: &str = "VM";
 pub static PUNCTUATION_PREFIX: &str = "$";
 pub static VERB_PREFIX: &str = "V";
 
