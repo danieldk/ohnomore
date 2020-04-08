@@ -5,8 +5,7 @@ use conllx::WriteSentence;
 use getopts::Options;
 use ohnomore::constants::{LEMMA_IS_FORM_TAGS, NO_LEMMA_TAGS};
 use ohnomore::transform::delemmatization::{
-    RemoveAlternatives, RemoveAuxTag, RemovePassivTag, RemoveReflexiveTag, RemoveSepVerbPrefix,
-    RemoveTruncMarker,
+    RemoveAlternatives, RemoveReflexiveTag, RemoveSepVerbPrefix, RemoveTruncMarker,
 };
 use ohnomore::transform::misc::{SimplifyArticleLemma, SimplifyPossesivePronounLemma};
 use ohnomore::transform::{Token, Transform};
@@ -53,8 +52,6 @@ fn main() {
 
     let transforms: &[Box<dyn Transform<conllx::Token>>] = &[
         Box::new(RemoveAlternatives),
-        Box::new(RemoveAuxTag),
-        Box::new(RemovePassivTag),
         Box::new(RemoveReflexiveTag),
         Box::new(RemoveSepVerbPrefix),
         Box::new(RemoveTruncMarker),

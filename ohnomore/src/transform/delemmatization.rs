@@ -37,57 +37,6 @@ where
     }
 }
 
-/// Remove auxiliary markers.
-///
-/// The TüBa-D/Z marks auxiliary readings of applicable verbs using the *%aux*
-/// suffix (e.g. *haben%aux*). This transformation rule removes such suffixes.
-pub struct RemoveAuxTag;
-
-impl<T> Transform<T> for RemoveAuxTag
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
-        let lemma = token.lemma();
-
-        if token.tag().starts_with(AUXILIARY_PREFIX) || token.tag().starts_with(MODAL_PREFIX) {
-            match lemma.rfind(AUXILIARY_MARKER) {
-                Some(idx) => lemma[..idx].to_owned(),
-                None => lemma.to_owned(),
-            }
-        } else {
-            lemma.to_owned()
-        }
-    }
-}
-
-/// Remove passive markers.
-///
-/// The TüBa-D/Z marks passive readings of applicable verbs using the *%passiv*
-/// suffixe (e.g. *werden%passiv*). This transformation rule removes such
-/// suffixes.
-pub struct RemovePassivTag;
-
-impl<T> Transform<T> for RemovePassivTag
-where
-    T: Token,
-{
-    fn transform(&self, graph: &DependencyGraph<T>, node: NodeIndex) -> String {
-        let token = &graph[node];
-        let lemma = token.lemma();
-
-        if token.tag().starts_with(AUXILIARY_PREFIX) {
-            match lemma.rfind(PASSIVE_MARKER) {
-                Some(idx) => lemma[..idx].to_owned(),
-                None => lemma.to_owned(),
-            }
-        } else {
-            lemma.to_owned()
-        }
-    }
-}
-
 /// Replace reflexive tag.
 ///
 /// Reflexives use the special *#refl* lemma in TüBa-D/Z. This transformation
@@ -183,17 +132,7 @@ where
 mod tests {
     use crate::transform::test_helpers::run_test_cases;
 
-    use super::{RemoveAuxTag, RemovePassivTag, RemoveSepVerbPrefix, RemoveTruncMarker};
-
-    #[test]
-    pub fn remove_auxiliary_tag() {
-        run_test_cases("testdata/remove-aux-tag.test", RemoveAuxTag);
-    }
-
-    #[test]
-    pub fn remove_passive_tag() {
-        run_test_cases("testdata/remove-passive-tag.test", RemovePassivTag);
-    }
+    use super::{RemoveSepVerbPrefix, RemoveTruncMarker};
 
     #[test]
     pub fn remove_sep_verb_prefix() {
