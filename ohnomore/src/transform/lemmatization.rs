@@ -185,7 +185,7 @@ where
         let form_lc = token.form().to_lowercase();
         let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc, token.tag());
         if !lemma_parts.is_empty() {
-            lemma_parts.push(lemma_lc.clone());
+            lemma_parts.push(lemma_lc);
             return lemma_parts.join("#");
         }
 
