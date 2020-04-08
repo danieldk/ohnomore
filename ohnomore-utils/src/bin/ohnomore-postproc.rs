@@ -1,12 +1,10 @@
 use std::env::args;
-use std::fs::File;
-use std::io::{BufReader, BufWriter};
+use std::io::BufWriter;
 
 use conllu::io::{Reader, WriteSentence, Writer};
 use getopts::Options;
 use ohnomore::transform::lemmatization::{
-    AddReflexiveTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes,
-    RestoreCase,
+    AddReflexiveTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, RestoreCase,
 };
 use ohnomore::transform::misc::{
     SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS, SimplifyPossesivePronounLemma,
@@ -15,10 +13,7 @@ use ohnomore::transform::Transforms;
 use stdinout::{Input, OrExit, Output};
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!(
-        "Usage: {} [options] VERB_PREFIXES [INPUT] [OUTPUT]",
-        program
-    );
+    let brief = format!("Usage: {} [options] [INPUT] [OUTPUT]", program);
     print!("{}", opts.usage(&brief));
 }
 
@@ -38,22 +33,17 @@ fn main() {
         return;
     }
 
-    if matches.free.is_empty() || matches.free.len() > 3 {
+    if matches.free.is_empty() || matches.free.len() > 2 {
         print_usage(&program, opts);
         return;
     }
-
-    let prefix_reader =
-        BufReader::new(File::open(&matches.free[0]).or_exit("Cannot open verb prefix file", 1));
-    let prefix_transform =
-        MarkVerbPrefix::read_verb_prefixes(prefix_reader).or_exit("Cannot read verb prefixes", 1);
 
     let transforms = Transforms(vec![
         Box::new(FormAsLemma),
         Box::new(RestoreCase),
         Box::new(AddReflexiveTag),
         Box::new(AddSeparatedVerbPrefix::new(true)),
-        Box::new(prefix_transform),
+        Box::new(MarkVerbPrefix::new()),
         Box::new(SimplifyArticleLemma),
         Box::new(SimplifyPossesivePronounLemma),
         Box::new(SimplifyPIS),
@@ -61,10 +51,10 @@ fn main() {
         Box::new(SimplifyPIAT),
     ]);
 
-    let input = Input::from(matches.free.get(1));
+    let input = Input::from(matches.free.get(0));
     let reader = Reader::new(input.buf_read().or_exit("Cannot read corpus", 1));
 
-    let output = Output::from(matches.free.get(2));
+    let output = Output::from(matches.free.get(1));
     let mut writer = Writer::new(BufWriter::new(
         output.write().or_exit("Cannot open file for writing", 1),
     ));
