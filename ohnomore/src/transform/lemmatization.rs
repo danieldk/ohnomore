@@ -14,6 +14,22 @@ use crate::transform::named_entity::restore_named_entity_case;
 use crate::transform::svp::longest_prefixes;
 use crate::transform::{DependencyGraph, Transform};
 
+/// Set the lemma of reflexive personal pronouns (PRF) to `#refl`.
+pub struct AddReflexiveTag;
+
+impl Transform for AddReflexiveTag {
+    fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
+        let token = graph.token(node);
+        let lemma = token.lemma();
+
+        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
+            REFLEXIVE_PERSONAL_PRONOUN_LEMMA.to_owned()
+        } else {
+            lemma.to_owned()
+        }
+    }
+}
+
 /// Add separable verb prefixes to verbs.
 ///
 /// TüBa-D/Z marks separable verb prefixes in the verb lemma. E.g. *ab#zeichnen*,

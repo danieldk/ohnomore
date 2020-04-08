@@ -5,7 +5,8 @@ use std::io::{BufReader, BufWriter};
 use conllu::io::{Reader, WriteSentence, Writer};
 use getopts::Options;
 use ohnomore::transform::lemmatization::{
-    AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes, RestoreCase,
+    AddReflexiveTag, AddSeparatedVerbPrefix, FormAsLemma, MarkVerbPrefix, ReadVerbPrefixes,
+    RestoreCase,
 };
 use ohnomore::transform::misc::{
     SimplifyArticleLemma, SimplifyPIAT, SimplifyPIDAT, SimplifyPIS, SimplifyPossesivePronounLemma,
@@ -50,6 +51,7 @@ fn main() {
     let transforms = Transforms(vec![
         Box::new(FormAsLemma),
         Box::new(RestoreCase),
+        Box::new(AddReflexiveTag),
         Box::new(AddSeparatedVerbPrefix::new(true)),
         Box::new(prefix_transform),
         Box::new(SimplifyArticleLemma),
