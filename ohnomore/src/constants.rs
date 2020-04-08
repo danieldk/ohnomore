@@ -28,10 +28,6 @@ pub(crate) static ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET: &str = "PIAT";
 pub(crate) static ATTRIBUTING_INDEF_PRONOUN_WITH_DET: &str = "PIDAT";
 
 lazy_static! {
-    pub(crate) static ref NO_LEMMA_TAGS: HashSet<&'static str> = hashset! {
-        "PTKVZ"
-    };
-
     pub(crate) static ref LEMMA_IS_FORM_TAGS: HashSet<&'static str> = hashset! {
         "$,",
         "$.",
@@ -51,19 +47,8 @@ lazy_static! {
         "PTKA",
         "PTKNEG",
     };
-
     pub(crate) static ref LEMMA_IS_FORM_PRESERVE_CASE_TAGS: HashSet<&'static str> = hashset! {
         FOREIGN_WORD_TAG,
-    };
-
-    /// Part-of-speech tags that have special (non-word) lemmas.
-    pub(crate) static ref SPECIAL_LEMMA_TAGS: HashSet<&'static str> = hashset! {
-        "ART",
-        "PDS",
-        "PPER",
-        "PPOSAT",
-        "PRF",
-        "PRELS",
     };
 }
 
