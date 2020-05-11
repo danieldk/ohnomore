@@ -94,21 +94,15 @@ impl Transform for RemoveTruncMarker {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if token.xpos() == TRUNCATED_TAG {
-            if let Some(idx) = lemma.rfind('%') {
-                let tag = &lemma[idx + 1..];
-
-                let form = if tag == "n" {
-                    token.form().to_owned()
-                } else {
-                    token.form().to_lowercase()
-                };
-
-                return form;
-            }
+        if token.xpos() != TRUNCATED_TAG {
+            return lemma.to_owned();
         }
 
-        lemma.to_owned()
+        if token.upos() == "NOUN" {
+            token.form().to_owned()
+        } else {
+            token.form().to_lowercase()
+        }
     }
 }
 
