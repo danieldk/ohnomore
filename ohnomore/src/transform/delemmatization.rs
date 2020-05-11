@@ -17,9 +17,9 @@ impl Transform for RemoveAlternatives {
         let token = graph.token(node);
         let mut lemma = token.lemma();
 
-        if token.tag().starts_with(PUNCTUATION_PREFIX)
-            || token.tag() == NON_WORD_TAG
-            || token.tag() == FOREIGN_WORD_TAG
+        if token.xpos().starts_with(PUNCTUATION_PREFIX)
+            || token.xpos() == NON_WORD_TAG
+            || token.xpos() == FOREIGN_WORD_TAG
         {
             return lemma.to_owned();
         }
@@ -43,7 +43,7 @@ impl Transform for RemoveReflexiveTag {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
+        if token.xpos() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
             return token.form().to_lowercase();
         }
 
@@ -64,7 +64,7 @@ impl Transform for RemoveSepVerbPrefix {
         let token = graph.token(node);
         let mut lemma = token.lemma();
 
-        if is_verb(token.tag()) {
+        if is_verb(token.xpos()) {
             if let Some(idx) = lemma.rfind('#') {
                 lemma = &lemma[idx + 1..];
             }
@@ -94,7 +94,7 @@ impl Transform for RemoveTruncMarker {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if token.tag() == TRUNCATED_TAG {
+        if token.xpos() == TRUNCATED_TAG {
             if let Some(idx) = lemma.rfind('%') {
                 let tag = &lemma[idx + 1..];
 

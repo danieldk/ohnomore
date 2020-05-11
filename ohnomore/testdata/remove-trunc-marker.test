@@ -1,10 +1,10 @@
-# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
-#   [rel dep_form dep_lemma dep_pos]*
+# Format: form lemma upos xpos transformed [rel head_form head_lemma head_upos head_xpos]
+#   [rel dep_form dep_lemma dep_upos dep_xpos]*
 
-Bau-   Bauplanung%n   TRUNC Bau-
-jahre- jahrelang%a    TRUNC jahre-
-Jahre- jahrelang%a    TRUNC jahre-
-hin-   hin#schieben%v TRUNC hin-
+Bau-   Bauplanung%n   _ TRUNC Bau-
+jahre- jahrelang%a    _ TRUNC jahre-
+Jahre- jahrelang%a    _ TRUNC jahre-
+hin-   hin#schieben%v _ TRUNC hin-
 
 # Should not fire for other tags
-Bau- Bauplanung%n XYZ Bauplanung%n
+Bau- Bauplanung%n _ XYZ Bauplanung%n

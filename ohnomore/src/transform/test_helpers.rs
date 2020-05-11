@@ -41,7 +41,8 @@ impl DependencyGraph for TestCaseGraph {
 pub struct TestToken {
     form: String,
     lemma: String,
-    tag: String,
+    upos: String,
+    xpos: String,
 }
 
 impl Token for TestToken {
@@ -53,8 +54,12 @@ impl Token for TestToken {
         &self.lemma
     }
 
-    fn tag(&self) -> &str {
-        &self.tag
+    fn upos(&self) -> &str {
+        &self.upos
+    }
+
+    fn xpos(&self) -> &str {
+        &self.xpos
     }
 }
 
@@ -79,7 +84,8 @@ fn read_token(iter: &mut dyn Iterator<Item = &str>) -> Option<TestToken> {
     Some(TestToken {
         form: iter.next()?.to_owned(),
         lemma: iter.next()?.to_owned(),
-        tag: iter.next()?.to_owned(),
+        upos: iter.next()?.to_owned(),
+        xpos: iter.next()?.to_owned(),
     })
 }
 
@@ -110,12 +116,16 @@ where
         graph.add_node(TestToken {
             form: "ROOT".to_string(),
             lemma: "ROOT".to_string(),
-            tag: "ROOT".to_string(),
+            upos: "root".to_string(),
+            xpos: "root".to_string(),
         });
 
         let test_token = read_token(&mut iter).unwrap();
         let index = graph.add_node(test_token);
-        let correct = iter.next().expect("Gold standard lemma missing").to_owned();
+        let correct = iter
+            .next()
+            .expect(&format!("Gold standard lemma missing: {}", line_str))
+            .to_owned();
 
         // Optional: read head
         if let Some((rel, head)) = read_dependency(&mut iter) {

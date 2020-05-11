@@ -22,7 +22,7 @@ impl Transform for AddReflexiveTag {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if token.tag() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
+        if token.xpos() == REFLEXIVE_PERSONAL_PRONOUN_TAG {
             REFLEXIVE_PERSONAL_PRONOUN_LEMMA.to_owned()
         } else {
             lemma.to_owned()
@@ -61,7 +61,7 @@ impl Transform for AddSeparatedVerbPrefix {
         let token = graph.token(node);
         let lemma = token.lemma();
 
-        if !is_separable_verb(token.tag()) {
+        if !is_separable_verb(token.xpos()) {
             return lemma.to_owned();
         }
 
@@ -74,7 +74,7 @@ impl Transform for AddSeparatedVerbPrefix {
         // Fixme: what about particles linked KON?
         let mut prefix_iter = graph
             .dependents(node)
-            .filter(|(dependent, _)| graph.token(*dependent).tag() == SEPARABLE_PARTICLE_POS);
+            .filter(|(dependent, _)| graph.token(*dependent).xpos() == SEPARABLE_PARTICLE_POS);
 
         if self.multiple_prefixes {
             let mut lemmas = Vec::new();
@@ -109,9 +109,9 @@ impl Transform for FormAsLemma {
         let token = graph.token(node);
 
         // Handle tags for which the lemma is the lowercased form.
-        if LEMMA_IS_FORM_TAGS.contains(token.tag()) {
+        if LEMMA_IS_FORM_TAGS.contains(token.xpos()) {
             token.form().to_lowercase()
-        } else if LEMMA_IS_FORM_PRESERVE_CASE_TAGS.contains(token.tag()) {
+        } else if LEMMA_IS_FORM_PRESERVE_CASE_TAGS.contains(token.xpos()) {
             token.form().to_owned()
         } else {
             token.lemma().to_owned()
@@ -172,7 +172,7 @@ impl Transform for MarkVerbPrefix {
         let lemma = token.lemma();
         let lemma_lc = lemma.to_lowercase();
 
-        if !is_verb(token.tag()) {
+        if !is_verb(token.xpos()) {
             return lemma.to_owned();
         }
 
@@ -193,7 +193,7 @@ impl Transform for MarkVerbPrefix {
         // Case 2: there are no prefixes in the lemma, try to find prefixes
         // in the form.
         let form_lc = token.form().to_lowercase();
-        let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc, token.tag());
+        let mut lemma_parts = longest_prefixes(&self.prefixes, &form_lc, &lemma_lc, token.xpos());
         if !lemma_parts.is_empty() {
             lemma_parts.push(lemma_lc);
             return lemma_parts.join("#");
@@ -238,9 +238,9 @@ impl Transform for RestoreCase {
     fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
         let token = graph.token(node);
 
-        if token.tag() == NOUN_TAG {
+        if token.xpos() == NOUN_TAG {
             uppercase_first_char(token.lemma())
-        } else if token.tag() == NAMED_ENTITY_TAG {
+        } else if token.xpos() == NAMED_ENTITY_TAG {
             restore_named_entity_case(token.form(), token.lemma())
         } else {
             token.lemma().to_owned()

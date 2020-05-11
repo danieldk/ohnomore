@@ -1,83 +1,83 @@
-# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
-#   [rel dep_form dep_lemma dep_pos]*
+# Format: form lemma upos xpos transformed [rel head_form head_lemma head_upos head_xpos]
+#   [rel dep_form dep_lemma dep_upos dep_xpos]*
 
-keinen	kein	PIAT    kein
-keine	kein	PIAT    kein
-mehrere	mehrere	PIAT    mehrere
-mehr	mehr	PIAT    mehr
-kein	kein	PIAT    kein
-einige	einiges	PIAT    einig
-soviel	soviel	PIAT    soviel
-mehreren	mehrere	PIAT    mehrere
-etliche	etliche	PIAT    etlich
-weniger	weniger	PIAT   	wenig
-keiner	keine	PIAT	kein
-manche	mancher	PIAT	manch
-viel	viel	PIAT	viel
-wenig	wenig	PIAT	wenig
-keinerlei	keinerlei	PIAT keinerlei
-irgendwelchen	irgendwelches	PIAT irgendwelch
-einigen	einiger	PIAT	einig
-derlei	derlei	PIAT	derlei
-genausoviel	genausoviel	PIAT	genausoviel
-etwas	etwas	PIAT	etwas
-keinem	kein	PIAT	kein
-#köön	kein_	PIAT	kein
-einigem	einiger	PIAT	einig
-manchen	mancher	PIAT	manch
-manches	manches	PIAT	manch
-sowas	sowas	PIAT	sowas
-einiger	einige	PIAT	einig
-ebensoviel	ebensoviel	PIAT	ebensoviel
-allerhand	allerhand	PIAT	allerhand
-genug	genug	PIAT	genug
-irgendein	irgendein	PIAT	irgendein
-reichlich	reichlich	PIAT	reichlich
-genügend	genügend	PIAT	genügend
-irgendeiner	irgendeine	PIAT	irgendein
-lauter	lauter	PIAT	lauter
-was	etwas	PIAT	etwas
-mancher	mancher	PIAT	manch
-zuviel	zuviel	PIAT	zuviel
-allerlei	allerlei	PIAT	allerlei
-mehrerer	mehrere	PIAT	mehrere
-#kain	kein_	PIAT	kein
-zuwenig	zuwenig	PIAT	zuwenig
-allzuviel	allzuviel	PIAT	allzuviel
-ausreichend	ausreichend	PIAT	ausreichend
-irgendeine	irgendeine	PIAT	irgendein
-keines	kein	PIAT	kein
-dergleichen	dergleichen	PIAT	dergleichen
-#ken	kein	PIAT	kein
-etliches	etliches	PIAT	etlich
-einiges	einiges	PIAT	einig
-irgendwelche	irgendwelche	PIAT	irgendwelch
-gleichviel	gleichviel	PIAT	gleichviel
-etlicher	etliche	PIAT	etlich
-irgendeinem	irgendein	PIAT	irgendein
-zweierlei	zweierlei	PIAT	zweierlei
-etlichen	etliche	PIAT	etlich
-vielerlei	vielerlei	PIAT	vielerlei
-beiderlei	beiderlei	PIAT	beiderlei
-manchem	manches	PIAT	manch
-intertransmultibiviele	intertransmultibiviel	PIAT	intertransmultibiviel
-#mache	manche	PIAT	manch
-mehrer	mehrere	PIAT	mehrere
-irgendwelcher	irgendwelcher	PIAT	irgendwelch
-sowenig	sowenig	PIAT	sowenig
-irgendeinen	irgendein	PIAT	irgendein
-allelei	allerlei	PIAT	allerlei
-genausowenig	genausowenig	PIAT	genausowenig
-solcherlei	solcherlei	PIAT	solcherlei
-irgendeines	irgendein	PIAT	irgendein
-tausenderlei	tausenderlei	PIAT	tausenderlei
-jedwedem	jedweder	PIAT	jedwed
-etwelchen	etwelcher	PIAT	etwelcher
-#keene	keine_	PIAT	kein
-genügnd	genügend_	PIAT	genügend_
-jedwedes	jedwedes	PIAT	jedwed
-jedweder	jedwede	PIAT	jedwed
-jedweden	jedwedes	PIAT	jedwed
-diese	diese	PIAT	diese
-siebenerlei	siebenerlei	PIAT	siebenerlei
-kein(e)	kein	PIAT	kein
+keinen	kein	_	PIAT    kein
+keine	kein	_	PIAT    kein
+mehrere	mehrere	_	PIAT    mehrere
+mehr	mehr	_	PIAT    mehr
+kein	kein	_	PIAT    kein
+einige	einiges	_	PIAT    einig
+soviel	soviel	_	PIAT    soviel
+mehreren	mehrere	_	PIAT    mehrere
+etliche	etliche	_	PIAT    etlich
+weniger	weniger	_	PIAT   	wenig
+keiner	keine	_	PIAT	kein
+manche	mancher	_	PIAT	manch
+viel	viel	_	PIAT	viel
+wenig	wenig	_	PIAT	wenig
+keinerlei	keinerlei	_	PIAT keinerlei
+irgendwelchen	irgendwelches	_	PIAT irgendwelch
+einigen	einiger	_	PIAT	einig
+derlei	derlei	_	PIAT	derlei
+genausoviel	genausoviel	_	PIAT	genausoviel
+etwas	etwas	_	PIAT	etwas
+keinem	kein	_	PIAT	kein
+#köön	kein_	_	PIAT	kein
+einigem	einiger	_	PIAT	einig
+manchen	mancher	_	PIAT	manch
+manches	manches	_	PIAT	manch
+sowas	sowas	_	PIAT	sowas
+einiger	einige	_	PIAT	einig
+ebensoviel	ebensoviel	_	PIAT	ebensoviel
+allerhand	allerhand	_	PIAT	allerhand
+genug	genug	_	PIAT	genug
+irgendein	irgendein	_	PIAT	irgendein
+reichlich	reichlich	_	PIAT	reichlich
+genügend	genügend	_	PIAT	genügend
+irgendeiner	irgendeine	_	PIAT	irgendein
+lauter	lauter	_	PIAT	lauter
+was	etwas	_	PIAT	etwas
+mancher	mancher	_	PIAT	manch
+zuviel	zuviel	_	PIAT	zuviel
+allerlei	allerlei	_	PIAT	allerlei
+mehrerer	mehrere	_	PIAT	mehrere
+#kain	kein_	_	PIAT	kein
+zuwenig	zuwenig	_	PIAT	zuwenig
+allzuviel	allzuviel	_	PIAT	allzuviel
+ausreichend	ausreichend	_	PIAT	ausreichend
+irgendeine	irgendeine	_	PIAT	irgendein
+keines	kein	_	PIAT	kein
+dergleichen	dergleichen	_	PIAT	dergleichen
+#ken	kein	_	PIAT	kein
+etliches	etliches	_	PIAT	etlich
+einiges	einiges	_	PIAT	einig
+irgendwelche	irgendwelche	_	PIAT	irgendwelch
+gleichviel	gleichviel	_	PIAT	gleichviel
+etlicher	etliche	_	PIAT	etlich
+irgendeinem	irgendein	_	PIAT	irgendein
+zweierlei	zweierlei	_	PIAT	zweierlei
+etlichen	etliche	_	PIAT	etlich
+vielerlei	vielerlei	_	PIAT	vielerlei
+beiderlei	beiderlei	_	PIAT	beiderlei
+manchem	manches	_	PIAT	manch
+intertransmultibiviele	intertransmultibiviel	_	PIAT	intertransmultibiviel
+#mache	manche	_	PIAT	manch
+mehrer	mehrere	_	PIAT	mehrere
+irgendwelcher	irgendwelcher	_	PIAT	irgendwelch
+sowenig	sowenig	_	PIAT	sowenig
+irgendeinen	irgendein	_	PIAT	irgendein
+allelei	allerlei	_	PIAT	allerlei
+genausowenig	genausowenig	_	PIAT	genausowenig
+solcherlei	solcherlei	_	PIAT	solcherlei
+irgendeines	irgendein	_	PIAT	irgendein
+tausenderlei	tausenderlei	_	PIAT	tausenderlei
+jedwedem	jedweder	_	PIAT	jedwed
+etwelchen	etwelcher	_	PIAT	etwelcher
+#keene	keine_	_	PIAT	kein
+genügnd	genügend_	_	PIAT	genügend_
+jedwedes	jedwedes	_	PIAT	jedwed
+jedweder	jedwede	_	PIAT	jedwed
+jedweden	jedwedes	_	PIAT	jedwed
+diese	diese	_	PIAT	diese
+siebenerlei	siebenerlei	_	PIAT	siebenerlei
+kein(e)	kein	_	PIAT	kein

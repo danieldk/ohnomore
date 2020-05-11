@@ -1,26 +1,26 @@
-# Format: form lemma pos transformed [rel head_form head_lemma head_pos]
-#   [rel dep_form dep_lemma dep_pos]*
+# Format: form lemma upos xpos transformed [rel head_form head_lemma head_upos head_xpos]
+#   [rel dep_form dep_lemma dep_upos dep_xpos]*
 
 # Nouns should have uppercased initial letters.
-_ bett NN Bett
-_ Bett NN Bett
+_ bett _ NN Bett
+_ Bett _ NN Bett
 
 # Named entities
-Apple       apple     NE Apple
-Apple's     apple     NE Apple
-Italiens    italien   NE Italien
-Liga-Chef   liga-chef NE Liga-Chef
-Liga-Chef's liga-chef NE Liga-Chef
-LigaChef's  liga-chef NE Liga-Chef
-D'Alema     d'alema   NE D'Alema
-CDU         cdu       NE CDU
-CDU's       cdu       NE CDU
-foobar      cdu       NE cdu
+Apple       apple     _ NE Apple
+Apple's     apple     _ NE Apple
+Italiens    italien   _ NE Italien
+Liga-Chef   liga-chef _ NE Liga-Chef
+Liga-Chef's liga-chef _ NE Liga-Chef
+LigaChef's  liga-chef _ NE Liga-Chef
+D'Alema     d'alema   _ NE D'Alema
+CDU         cdu       _ NE CDU
+CDU's       cdu       _ NE CDU
+foobar      cdu       _ NE cdu
 
 # Check that strings are normalized. The form containes the composed
 # character u0065 u0308, rather than u00eb.
-Ëee ëee NE Ëee
+Ëee ëee _ NE Ëee
 
 # For other tags, nothing changes.
-_      laufen VVFIN laufen
-Laufen laufen VVFIN laufen
+_      laufen _ VVFIN laufen
+Laufen laufen _ VVFIN laufen

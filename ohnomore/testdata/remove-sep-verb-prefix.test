@@ -1,11 +1,11 @@
-# Format: form lemma pos transformed
+# Format: form lemma upos xpos transformed
 
 # Should be stripped
-_ hinein#ziehen   VVPP  ziehen
-_ zusammen#hängen VVFIN hängen
+_ hinein#ziehen   _ VVPP  ziehen
+_ zusammen#hängen _ VVFIN hängen
 
 # Multiple prefixes
-_ wieder#auf#bauen VVINF bauen
+_ wieder#auf#bauen _ VVINF bauen
 
 # No changes for non-verbs
-_ CD#1 NN CD#1
+_ CD#1 _ NN CD#1
