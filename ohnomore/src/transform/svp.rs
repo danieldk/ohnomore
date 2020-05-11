@@ -16,7 +16,10 @@ struct PrefixesCandidate<'a> {
 /// we'd construct a Kleene star automaton of the prefix automaton.
 /// Unfortunately, this functionality is not (yet) provided by the
 /// fst crate. Instead, we repeatedly search prefixes in the set.
-fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<PrefixesCandidate<'a>> {
+fn prefix_star<'a, D>(prefix_set: &Set<D>, s: &'a str) -> Vec<PrefixesCandidate<'a>>
+where
+    D: AsRef<[u8]>,
+{
     let mut result = Vec::new();
 
     let mut q = VecDeque::new();
@@ -49,8 +52,9 @@ fn prefix_star<'a>(prefix_set: &Set, s: &'a str) -> Vec<PrefixesCandidate<'a>> {
     result
 }
 
-pub fn longest_prefixes<F, L, T>(prefix_set: &Set, form: F, lemma: L, tag: T) -> Vec<String>
+pub fn longest_prefixes<D, F, L, T>(prefix_set: &Set<D>, form: F, lemma: L, tag: T) -> Vec<String>
 where
+    D: AsRef<[u8]>,
     F: AsRef<str>,
     L: AsRef<str>,
     T: AsRef<str>,

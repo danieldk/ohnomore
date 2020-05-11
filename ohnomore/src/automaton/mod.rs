@@ -2,13 +2,16 @@ use fst::raw::{Fst, Node};
 use fst::Set;
 
 /// Search prefixes of a string in a set.
-pub trait Prefixes {
+pub trait Prefixes<D> {
     /// Get an iterator over the prefixes of a string that are in a set.
-    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b>;
+    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b, D>;
 }
 
-impl Prefixes for Set {
-    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b> {
+impl<D> Prefixes<D> for Set<D>
+where
+    D: AsRef<[u8]>,
+{
+    fn prefixes<'a, 'b>(&'a self, word: &'b str) -> PrefixIter<'a, 'b, D> {
         PrefixIter {
             fst: self.as_fst(),
             node: self.as_fst().root(),
@@ -19,14 +22,17 @@ impl Prefixes for Set {
 }
 
 /// Prefix iterator.
-pub struct PrefixIter<'a, 'b> {
-    fst: &'a Fst,
+pub struct PrefixIter<'a, 'b, D> {
+    fst: &'a Fst<D>,
     node: Node<'a>,
     prefix_len: usize,
     word: &'b str,
 }
 
-impl<'a, 'b> Iterator for PrefixIter<'a, 'b> {
+impl<'a, 'b, D> Iterator for PrefixIter<'a, 'b, D>
+where
+    D: AsRef<[u8]>,
+{
     type Item = &'b str;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -55,7 +61,10 @@ pub trait LongestPrefix {
     fn longest_prefix<'a>(&self, word: &'a str) -> Option<&'a str>;
 }
 
-impl LongestPrefix for fst::Set {
+impl<D> LongestPrefix for fst::Set<D>
+where
+    D: AsRef<[u8]>,
+{
     fn longest_prefix<'a>(&self, word: &'a str) -> Option<&'a str> {
         self.prefixes(word).last()
     }
@@ -67,13 +76,13 @@ mod tests {
 
     use super::Prefixes;
 
-    fn test_set() -> Set {
+    fn test_set() -> Set<Vec<u8>> {
         let mut builder = SetBuilder::memory();
         builder
             .extend_iter(&["p", "pre", "pref", "prefix"])
             .unwrap();
         let bytes = builder.into_inner().unwrap();
-        Set::from_bytes(bytes).unwrap()
+        Set::new(bytes).unwrap()
     }
 
     #[test]

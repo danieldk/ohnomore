@@ -5,9 +5,8 @@ authors = ["Daniël de Kok <me@danieldk.eu>"]
 edition = "2018"
 
 [dependencies]
-conllu = "0.3"
+conllu = "0.5.1"
 failure = "0.1"
 getopts = "0.2"
 ohnomore = { path = "../ohnomore" }
-petgraph = "0.4"
 stdinout = "0.4"
