@@ -38,7 +38,7 @@ impl Measure<char> for CaseInsensitiveLevenshtein {
 }
 
 /// Case-insensitive Levenshtein operation with associated cost.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 enum CaseInsensitiveLevenshteinOp {
     Insert(usize),
     Delete(usize),
@@ -68,7 +68,7 @@ impl Operation<char> for CaseInsensitiveLevenshteinOp {
     fn cost(
         &self,
         seq_pair: &SeqPair<char>,
-        cost_matrix: &Vec<Vec<usize>>,
+        cost_matrix: &[Vec<usize>],
         source_idx: usize,
         target_idx: usize,
     ) -> Option<usize> {

@@ -141,7 +141,7 @@ impl Transform for FormAsLemma {
 /// separable prefix.
 pub struct MarkVerbPrefix {
     prefix_verbs: HashMap<String, String>,
-    prefixes: Set,
+    prefixes: Set<Vec<u8>>,
 }
 
 impl MarkVerbPrefix {
@@ -223,7 +223,7 @@ impl ReadVerbPrefixes for MarkVerbPrefix {
         }
 
         let bytes = builder.into_inner()?;
-        let prefixes = Set::from_bytes(bytes)?;
+        let prefixes = Set::new(bytes)?;
 
         Ok(MarkVerbPrefix {
             prefix_verbs: HashMap::new(),

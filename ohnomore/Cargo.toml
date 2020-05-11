@@ -6,14 +6,13 @@ edition = "2018"
 
 [dependencies]
 caseless = "0.2"
-conllu = "0.3"
+conllu = "0.5.1"
 failure = "0.1"
-fst = "0.3"
-lazy_static = "1.0"
-maplit = "1.0"
-petgraph = "0.4"
-seqalign = "0.1"
+fst = "0.4"
+lazy_static = "1"
+maplit = "1"
+seqalign = "0.2"
 unicode-normalization = "0.1"
 
 [dev-dependencies]
-quickcheck = "0.5"
+petgraph = "0.5"

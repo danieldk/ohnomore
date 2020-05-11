@@ -43,7 +43,7 @@ impl Transform for SimplifyArticleLemma {
 }
 
 lazy_static! {
-    static ref PIAT_PREFIXES: Set = Set::from_iter(vec![
+    static ref PIAT_PREFIXES: Set<Vec<u8>> = Set::from_iter(vec![
         "einig",
         "etlich",
         "irgendein",
@@ -100,9 +100,9 @@ impl Transform for SimplifyPIAT {
 }
 
 lazy_static! {
-    static ref PIDAT_LONG_PREFIXES: Set =
+    static ref PIDAT_LONG_PREFIXES: Set<Vec<u8>> =
         Set::from_iter(vec!["allermeisten", "jedwed", "wenigst"]).unwrap();
-    static ref PIDAT_PREFIXES: Set = Set::from_iter(vec![
+    static ref PIDAT_PREFIXES: Set<Vec<u8>> = Set::from_iter(vec![
         "all",
         "ebensolch",
         "ebensoviel",
@@ -167,7 +167,7 @@ impl Transform for SimplifyPIDAT {
 }
 
 lazy_static! {
-    static ref PIS_LONG_PREFIXES: Set = Set::from_iter(vec![
+    static ref PIS_LONG_PREFIXES: Set<Vec<u8>> = Set::from_iter(vec![
         "alledem",
         "allerhand",
         "allerlei",
@@ -179,7 +179,7 @@ lazy_static! {
         "wenigst",
     ])
     .unwrap();
-    static ref PIS_PREFIXES: Set = Set::from_iter(vec![
+    static ref PIS_PREFIXES: Set<Vec<u8>> = Set::from_iter(vec![
         "alle",
         "ander",
         "beid",
@@ -305,9 +305,9 @@ impl Transform for SimplifyPersonalPronounLemma {
 }
 
 lazy_static! {
-    static ref ATTR_POSS_PRONOUN_PREFIXES: Set =
+    static ref ATTR_POSS_PRONOUN_PREFIXES: Set<Vec<u8>> =
         Set::from_iter(vec!["dein", "euer", "eure", "ihr", "mein", "sein", "unser"]).unwrap();
-    static ref SUBST_POSS_PRONOUN_PREFIXES: Set =
+    static ref SUBST_POSS_PRONOUN_PREFIXES: Set<Vec<u8>> =
         Set::from_iter(vec!["dein", "ihr", "mein", "sein", "unser", "unsrig"]).unwrap();
 }
 
