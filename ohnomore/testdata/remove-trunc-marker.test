@@ -1,10 +1,10 @@
 # Format: form lemma upos xpos transformed [rel head_form head_lemma head_upos head_xpos]
 #   [rel dep_form dep_lemma dep_upos dep_xpos]*
 
-Bau-   Bauplanung%n   _ TRUNC Bau-
-jahre- jahrelang%a    _ TRUNC jahre-
-Jahre- jahrelang%a    _ TRUNC jahre-
-hin-   hin#schieben%v _ TRUNC hin-
+Bau-   Bauplanung   NOUN TRUNC Bau-
+jahre- jahrelang    ADJ TRUNC jahre-
+Jahre- jahrelang    ADJ TRUNC jahre-
+hin-   hin#schieben VERB TRUNC hin-
 
 # Should not fire for other tags
-Bau- Bauplanung%n _ XYZ Bauplanung%n
+Bau- foo NOUN XYZ foo
