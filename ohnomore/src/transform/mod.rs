@@ -48,7 +48,8 @@ pub trait TokenMut: Token {
 pub trait Token {
     fn form(&self) -> &str;
     fn lemma(&self) -> &str;
-    fn tag(&self) -> &str;
+    fn upos(&self) -> &str;
+    fn xpos(&self) -> &str;
 }
 
 impl Token for conllu::token::Token {
@@ -60,7 +61,11 @@ impl Token for conllu::token::Token {
         self.lemma().unwrap_or("_")
     }
 
-    fn tag(&self) -> &str {
+    fn upos(&self) -> &str {
+        self.upos().unwrap()
+    }
+
+    fn xpos(&self) -> &str {
         self.xpos().unwrap()
     }
 }

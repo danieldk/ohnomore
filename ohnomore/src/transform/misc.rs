@@ -28,7 +28,7 @@ impl Transform for SimplifyArticleLemma {
         let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
-        let tag = token.tag();
+        let tag = token.xpos();
 
         if tag == ARTICLE_TAG || tag == SUBST_REL_PRONOUN || tag == ATTR_REL_PRONOUN {
             if form.to_lowercase().starts_with('d') {
@@ -79,7 +79,7 @@ impl Transform for SimplifyPIAT {
         let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
-        let tag = token.tag();
+        let tag = token.xpos();
 
         if tag != ATTRIBUTING_INDEF_PRONOUN_WITHOUT_DET {
             return lemma.to_owned();
@@ -146,7 +146,7 @@ impl Transform for SimplifyPIDAT {
         let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
-        let tag = token.tag();
+        let tag = token.xpos();
 
         if tag != ATTRIBUTING_INDEF_PRONOUN_WITH_DET {
             return lemma.to_owned();
@@ -215,7 +215,7 @@ impl Transform for SimplifyPIS {
         let token = graph.token(node);
         let lemma = token.lemma();
         let form = token.form();
-        let tag = token.tag();
+        let tag = token.xpos();
 
         if tag != SUBSTITUTING_INDEF_PRONOUN {
             return lemma.to_owned();
@@ -288,7 +288,7 @@ pub struct SimplifyPersonalPronounLemma;
 impl Transform for SimplifyPersonalPronounLemma {
     fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
         let token = graph.token(node);
-        let tag = token.tag();
+        let tag = token.xpos();
         let lemma = token.lemma();
 
         if tag != PERSONAL_PRONOUN_TAG {
@@ -323,7 +323,7 @@ pub struct SimplifyPossesivePronounLemma;
 impl Transform for SimplifyPossesivePronounLemma {
     fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String {
         let token = graph.token(node);
-        let tag = token.tag();
+        let tag = token.xpos();
         let form = token.form();
         let lemma = token.lemma();
 
