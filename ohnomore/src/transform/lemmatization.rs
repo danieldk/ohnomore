@@ -150,7 +150,7 @@ impl MarkVerbPrefix {
     /// prefixes.
     pub fn new() -> Self {
         MarkVerbPrefix::read_verb_prefixes(Cursor::new(include_str!(
-            "../../data/tdz10-separable-prefixes.txt"
+            "../../data/tdz11-separable-prefixes.txt"
         )))
         .expect("Invalid separable verb prefix data")
     }
