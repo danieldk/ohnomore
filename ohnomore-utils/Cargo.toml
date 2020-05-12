@@ -6,7 +6,6 @@ edition = "2018"
 
 [dependencies]
 conllu = "0.5.1"
-failure = "0.1"
 getopts = "0.2"
 ohnomore = { path = "../ohnomore" }
 stdinout = "0.4"

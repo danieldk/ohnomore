@@ -6,13 +6,13 @@
 use std::collections::HashMap;
 use std::io::{BufRead, Cursor};
 
-use failure::Error;
 use fst::{Set, SetBuilder};
 
 use crate::constants::*;
 use crate::transform::named_entity::restore_named_entity_case;
 use crate::transform::svp::longest_prefixes;
 use crate::transform::{DependencyGraph, Transform};
+use crate::LemmatizationError;
 
 /// Set the lemma of reflexive personal pronouns (PRF) to `#refl`.
 pub struct AddReflexiveTag;
@@ -204,13 +204,13 @@ impl Transform for MarkVerbPrefix {
 }
 
 trait ReadVerbPrefixes {
-    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, Error>
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, LemmatizationError>
     where
         R: BufRead;
 }
 
 impl ReadVerbPrefixes for MarkVerbPrefix {
-    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, Error>
+    fn read_verb_prefixes<R>(r: R) -> Result<MarkVerbPrefix, LemmatizationError>
     where
         R: BufRead,
     {
