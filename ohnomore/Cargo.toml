@@ -7,11 +7,11 @@ edition = "2018"
 [dependencies]
 caseless = "0.2"
 conllu = "0.5.1"
-failure = "0.1"
 fst = "0.4"
 lazy_static = "1"
 maplit = "1"
 seqalign = "0.2"
+thiserror = "1"
 unicode-normalization = "0.1"
 
 [dev-dependencies]
