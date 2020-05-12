@@ -1,8 +1,11 @@
 [package]
 name = "ohnomore"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Daniël de Kok <me@danieldk.eu>"]
 edition = "2018"
+description = "Transformations for TüBa-D/Z lemmas"
+homepage = "https://github.com/sfb833-a3/ohnomore"
+license = "Apache-2.0"
 
 [dependencies]
 caseless = "0.2"
