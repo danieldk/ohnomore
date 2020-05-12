@@ -76,7 +76,7 @@ impl TokenMut for conllu::token::Token {
     }
 }
 
-pub trait Transform {
+pub trait Transform: Sync {
     fn transform(&self, graph: &dyn DependencyGraph, node: usize) -> String;
 }
 
