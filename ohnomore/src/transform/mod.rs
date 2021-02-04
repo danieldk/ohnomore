@@ -1,4 +1,4 @@
-use conllu::graph::Sentence;
+use udgraph::graph::Sentence;
 
 #[allow(clippy::len_without_is_empty)]
 pub trait DependencyGraph {
@@ -52,7 +52,7 @@ pub trait Token {
     fn xpos(&self) -> &str;
 }
 
-impl Token for conllu::token::Token {
+impl Token for udgraph::token::Token {
     fn form(&self) -> &str {
         self.form()
     }
@@ -70,7 +70,7 @@ impl Token for conllu::token::Token {
     }
 }
 
-impl TokenMut for conllu::token::Token {
+impl TokenMut for udgraph::token::Token {
     fn set_lemma(&mut self, lemma: Option<String>) {
         self.set_lemma(lemma);
     }
