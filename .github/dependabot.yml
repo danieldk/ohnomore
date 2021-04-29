@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: unicode-normalization
+    versions:
+    - 0.1.16
+  - dependency-name: thiserror
+    versions:
+    - 1.0.23
