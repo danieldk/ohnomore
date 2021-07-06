@@ -5,7 +5,7 @@ authors = ["Daniël de Kok <me@danieldk.eu>"]
 edition = "2018"
 description = "Transformation utilities for TüBa-D/Z lemmas"
 homepage = "https://github.com/sfb833-a3/ohnomore"
-license = "Apache-2.0"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 conllu = "0.6"
