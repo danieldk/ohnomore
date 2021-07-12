@@ -1,6 +1,6 @@
 [package]
 name = "ohnomore"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Daniël de Kok <me@danieldk.eu>"]
 edition = "2018"
 description = "Transformations for TüBa-D/Z lemmas"
