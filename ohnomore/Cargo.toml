@@ -18,4 +18,4 @@ udgraph = "0.6"
 unicode-normalization = "0.1"
 
 [dev-dependencies]
-petgraph = "0.5"
+petgraph = "0.6"
