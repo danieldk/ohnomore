@@ -1,6 +1,6 @@
 [package]
 name = "ohnomore-utils"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Daniël de Kok <me@danieldk.eu>"]
 edition = "2018"
 description = "Transformation utilities for TüBa-D/Z lemmas"
@@ -10,5 +10,5 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 conllu = "0.8"
 getopts = "0.2"
-ohnomore = { path = "../ohnomore" }
+ohnomore = { path = "../ohnomore", version = "0.5" }
 stdinout = "0.4"
