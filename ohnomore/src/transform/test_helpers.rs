@@ -124,7 +124,7 @@ where
         let index = graph.add_node(test_token);
         let correct = iter
             .next()
-            .expect(&format!("Gold standard lemma missing: {}", line_str))
+            .unwrap_or_else(|| panic!("Gold standard lemma missing: {}", line_str))
             .to_owned();
 
         // Optional: read head
