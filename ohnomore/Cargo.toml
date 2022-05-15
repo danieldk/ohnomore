@@ -14,7 +14,7 @@ lazy_static = "1"
 maplit = "1"
 seqalign = "0.2"
 thiserror = "1"
-udgraph = "0.7"
+udgraph = "0.8"
 unicode-normalization = "0.1"
 
 [dev-dependencies]

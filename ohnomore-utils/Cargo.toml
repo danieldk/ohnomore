@@ -8,7 +8,7 @@ homepage = "https://github.com/sfb833-a3/ohnomore"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-conllu = "0.7"
+conllu = "0.8"
 getopts = "0.2"
 ohnomore = { path = "../ohnomore" }
 stdinout = "0.4"
