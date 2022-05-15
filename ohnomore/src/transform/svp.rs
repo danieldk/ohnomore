@@ -38,7 +38,7 @@ where
             prefixes: prefixes.clone(),
         });
 
-        for prefix in prefix_set.prefixes(&stripped_form) {
+        for prefix in prefix_set.prefixes(stripped_form) {
             let mut prefixes = prefixes.clone();
             let prefix_len = prefix.len();
             prefixes.push(prefix.to_owned());
